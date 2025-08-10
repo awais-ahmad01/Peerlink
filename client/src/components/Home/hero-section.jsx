@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 const HeroSection = ()=>{
 
     return(
-        <div className="flex flex-col-reverse lg:flex-row justify-center items-center gap-8 p-8 pt-32 md:pt-40">
-            <div className="lg:w-[50%]">
+         <div className="mb-24 flex justify-center items-center">
+         <div className="w-full max-w-7xl">
+                <div className="flex flex-col-reverse lg:flex-row justify-center items-center gap-8 p-8 pt-32 md:pt-40">
+            <div className="lg:w-[50%] ">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-6">Instant, private video calls — no downloads needed.</h1>
                 <p className="text-lg sm:text-xl text-[rgba(255,255,255,0.7)] mb-8 max-w-xl">Create a secure room and connect with anyone, anywhere. Just share the link and talk. Experience seamless video calling with enterprise-grade security.</p>
                 
@@ -29,6 +31,8 @@ const HeroSection = ()=>{
 
                 <img src="/images/peerlink.png" alt="peerlink" className="w-full max-w-[500px] h-auto"/>
 
+            </div>
+        </div>
             </div>
         </div>
     )
