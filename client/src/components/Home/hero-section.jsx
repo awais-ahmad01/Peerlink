@@ -17,7 +17,7 @@ const HeroSection = () => {
 
             <div className="flex gap-4">
               <Link
-                to="#"
+                to="create-room"
                 className="text-[0.9rem] bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] 
                         shadow-[0_4px_15px_rgba(102,126,234,0.3)] py-3 px-5 sm:py-4 sm:px-6 rounded-xl 
                         font-semibold cursor-pointer transition-all duration-300 

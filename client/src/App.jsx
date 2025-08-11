@@ -1,44 +1,35 @@
+import "./App.css";
 
-import './App.css'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Header from './components/header';
-import HeroSection from './components/Home/hero-section';
-import JoinRoomSection from './components/Home/joinRoom-section';
-import HowItWorksSection from './components/Home/howitworks-section';
-import FeaturesSection from './components/Home/features-section';
-import Footer from './components/footer';
-import CameraSection from './components/videoChatInterface/camera-section';
-import CreateRoom from './components/createRoomInterface/createRoom';
-import Dashboard from './components/userDashboard/dashboard';
-import AuthPage from './components/Auth/auth';
-
+import LandingPage from "./pages/landingPage";
+import AuthPage from "./pages/authPage";
+import CreateRoomPage from "./pages/createRoomPage";
+import VideoCallPage from "./pages/videoCallPage";
+import UserDashboard from "./pages/userDashboard";
+import NotFound from "./pages/notFoundPage";
 
 function App() {
-  
-
   return (
     <>
-       {/* <Header/> */}
+     
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
 
-      <AuthPage/>
+          <Route path="auth" element={<AuthPage />} />
 
-      {/* <Dashboard/>*/}
+          <Route path="create-room" element={<CreateRoomPage />} />
 
-      {/* <CreateRoom/> */}
+          <Route path="call-room" element={<VideoCallPage />} />
 
-       {/* <CameraSection/> */}
-{/* 
-       <HeroSection/>
+          <Route path="userDashboard" element={<UserDashboard />} />
 
-       <JoinRoomSection/>
-
-       <HowItWorksSection/>
-
-       <FeaturesSection/>
-
-       <Footer/> */}
+          <Route path="*" element={<NotFound/>} />
+          
+        </Routes>
+      
     </>
-  )
+  );
 }
 
-export default App
+export default App;

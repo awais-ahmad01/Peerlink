@@ -57,9 +57,10 @@ const Header = () => {
                 className="bg-[rgba(30,41,59,0.8)] py-6 px-8 md:px-20
                     border-b border-white/30 fixed top-0 z-[1000] w-[100%] backdrop-blur-[20px]">
                 <div className="flex justify-between items-center">
-                    <div className="">
+                    <div >
+                        
                         <Link to="/">
-                            <h1 className="text-2xl font-bold">PeerLink</h1>
+                            <h1 className="text-2xl font-bold before:content-['📹'] before:mr-2">PeerLink</h1>
                         </Link>
                     </div>
 

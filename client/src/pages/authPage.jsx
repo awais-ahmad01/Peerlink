@@ -36,10 +36,10 @@ const AuthPage =()=> {
     "block text-sm font-semibold text-indigo-300 mb-2 uppercase tracking-wider";
 
   const btnClass =
-    "w-full bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-xl p-4 text-lg font-semibold text-white relative overflow-hidden hover:translate-y-[-2px] hover:shadow-lg transition";
+    "w-full bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-xl p-4 text-lg font-semibold text-white relative overflow-hidden hover:translate-y-[-2px] hover:shadow-lg transition cursor-pointer";
 
   return (
-    <div className="py-10 px-5">
+    <div className="py-10 px-5 bg-gradient-to-tr from-slate-800 to-slate-950">
       <div className="flex items-center justify-center p-4">
       <div className="w-full max-w-lg bg-slate-800/60 border border-white/10 rounded-3xl p-8 backdrop-blur-lg shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-t-3xl" />
@@ -48,7 +48,7 @@ const AuthPage =()=> {
         <div className="flex mb-6">
           <button
             onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 border-b-2 ${
+            className={`flex-1 py-2 border-b-2 cursor-pointer ${
               isLogin ? "border-indigo-500 text-white" : "border-transparent text-white/70"
             }`}
           >
@@ -56,7 +56,7 @@ const AuthPage =()=> {
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 border-b-2 ${
+            className={`flex-1 py-2 border-b-2 cursor-pointer ${
               !isLogin ? "border-indigo-500 text-white" : "border-transparent text-white/70"
             }`}
           >
@@ -116,10 +116,10 @@ const AuthPage =()=> {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <input type="checkbox" className="w-5 h-5 accent-indigo-600" />
               <span className="text-sm text-white/80">Remember me for 30 days</span>
-            </div>
+            </div> */}
 
             <button type="submit" className={btnClass}>
               Sign In to PeerLink
@@ -151,7 +151,7 @@ const AuthPage =()=> {
               <button
                 type="button"
                 onClick={toggleForm}
-                className="text-indigo-500 hover:text-purple-500 font-semibold"
+                className="text-indigo-500 hover:text-purple-500 font-semibold cursor-pointer"
               >
                 Create your account →
               </button>
@@ -234,7 +234,7 @@ const AuthPage =()=> {
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
+            {/* <div className="flex items-start gap-3">
               <input type="checkbox" required className="w-5 h-5 accent-indigo-600" />
               <span className="text-sm text-white/80">
                 I agree to the{" "}
@@ -246,7 +246,7 @@ const AuthPage =()=> {
                   Privacy Policy
                 </a>
               </span>
-            </div>
+            </div> */}
 
            
 
@@ -280,7 +280,7 @@ const AuthPage =()=> {
               <button
                 type="button"
                 onClick={toggleForm}
-                className="text-indigo-500 hover:text-purple-500 font-semibold"
+                className="text-indigo-500 hover:text-purple-500 font-semibold cursor-pointer"
               >
                 Sign in instead →
               </button>

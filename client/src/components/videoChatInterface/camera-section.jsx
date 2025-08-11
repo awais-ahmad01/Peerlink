@@ -19,9 +19,8 @@ const CameraSection = () => {
   };
 
   return (
-    <div className="pt-32 md:pt-40">
+    <div className="pt-28 md:pt-36">
       <div className="relative flex h-[calc(100vh-180px)] p-4 gap-4">
-        {/* Camera section - shrinks when chat is open */}
         <div
           className={`${
             chatOpen ? "mr-[320px]" : "mr-0"
