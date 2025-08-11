@@ -148,8 +148,8 @@ const CameraSection = () => {
         <div className="bg-black/80 backdrop-blur-[10px] p-4 rounded-[2rem] flex justify-center items-center gap-3 text-[16px] md:text-2xl border border-white/10">
           <button
             title="Toggle Microphone"
-            className={`rounded-full p-4 md:p-6 bg-white/10
-            cursor-pointer hover:bg-white/20 transition-all duration-200 hover:scale-110
+            className={`rounded-full p-4 md:p-6 
+            cursor-pointer  transition-all duration-200 hover:scale-110
             ${micOpen ? "bg-green-500":"bg-white/10 hover:bg-white/20"}
             `}
             onClick={micToggle}
@@ -158,13 +158,13 @@ const CameraSection = () => {
           </button>
           <button
             title="Toggle Camera"
-            className="rounded-full p-4 md:p-6 bg-white/10 hover:bg-white/20 transition-all duration-200 hover:scale-110"
+            className="rounded-full p-4 md:p-6 bg-white/10 hover:bg-white/20  transition-all duration-200 hover:scale-110"
           >
             🎥
           </button>
           <button
             title="Participants"
-            className={`rounded-full p-4 md:p-6 bg-white/10 hover:bg-white/20 
+            className={`rounded-full p-4 md:p-6
                 transition-all duration-200 hover:scale-110 cursor-pointer
                 ${showParticipants ? "bg-green-500":"bg-white/10 hover:bg-white/20"
                 }

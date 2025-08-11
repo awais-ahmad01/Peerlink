@@ -8,7 +8,9 @@ import HowItWorksSection from './components/Home/howitworks-section';
 import FeaturesSection from './components/Home/features-section';
 import Footer from './components/footer';
 import CameraSection from './components/videoChatInterface/camera-section';
-
+import CreateRoom from './components/createRoomInterface/createRoom';
+import Dashboard from './components/userDashboard/dashboard';
+import AuthPage from './components/Auth/auth';
 
 
 function App() {
@@ -16,19 +18,25 @@ function App() {
 
   return (
     <>
-       <Header/>
+       {/* <Header/> */}
 
-       <CameraSection/>
+      <AuthPage/>
 
-       {/* <HeroSection/>
+      {/* <Dashboard/>*/}
+
+      {/* <CreateRoom/> */}
+
+       {/* <CameraSection/> */}
+{/* 
+       <HeroSection/>
 
        <JoinRoomSection/>
 
        <HowItWorksSection/>
 
-       <FeaturesSection/> */}
+       <FeaturesSection/>
 
-       {/* <Footer/> */}
+       <Footer/> */}
     </>
   )
 }
