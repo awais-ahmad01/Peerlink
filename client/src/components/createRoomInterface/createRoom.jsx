@@ -158,11 +158,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const CreateRoom = ({ roomId = "abc123", roomUrl }) => {
+const CreateRoom = () => {
   const [isMicOn, setIsMicOn] = useState(true);   
   const [isCamOn, setIsCamOn] = useState(true);  
   const [copied, setCopied] = useState(false);
-  const url = roomUrl ?? `https://peerlink.app/room/${roomId}`;
+  const [roomId, setRoomId] = useState('');
+  const url = `http://localhost:5173/call-room/${roomId}`;
   const navigate = useNavigate();
 
   // Local camera preview refs
@@ -185,6 +186,23 @@ const CreateRoom = ({ roomId = "abc123", roomUrl }) => {
         console.warn("Camera/Mic permission denied or unavailable", e);
       }
     })();
+
+
+    function generateRoomId(length = 8) {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let result = "";
+        for (let i = 0; i < length; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+
+        setRoomId(result);
+      
+        return true;
+}
+
+    generateRoomId();
+
+
 
     return () => {
       // Stop preview when leaving

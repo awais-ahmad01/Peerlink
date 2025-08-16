@@ -26,7 +26,7 @@ const HeroSection = () => {
               >
                 Start a Call
               </Link>
-              <Link
+              {/* <Link
                 to="#"
                 className="text-[0.9rem] bg-transparent py-3 px-5 sm:py-4 sm:px-6 rounded-xl 
                         font-semibold cursor-pointer transition-all duration-300 
@@ -34,7 +34,7 @@ const HeroSection = () => {
                         hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.3)]"
               >
                 Join Room
-              </Link>
+              </Link> */}
             </div>
           </div>
 
