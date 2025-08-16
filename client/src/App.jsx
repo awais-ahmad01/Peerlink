@@ -20,7 +20,7 @@ function App() {
 
           <Route path="create-room" element={<CreateRoomPage />} />
 
-          <Route path="call-room" element={<VideoCallPage />} />
+           <Route path="/call-room/:roomId" element={<VideoCallPage />} />
 
           <Route path="userDashboard" element={<UserDashboard />} />
 
