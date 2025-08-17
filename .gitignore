@@ -1,0 +1,20 @@
+# Global ignores
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+coverage/
+
+# Client-specific (Next.js or React)
+client/.next/
+client/.env
+client/node_modules/
+client/build/
+client/dist/
+
+# Server-specific
+server/node_modules/
+server/.env
+server/dist/
+server/build/
