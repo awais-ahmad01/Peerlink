@@ -1105,6 +1105,7 @@ const CameraSection = () => {
             {camOpen ? "🎥" : "🚫"}
           </button>
 
+
           <button
             title="Participants"
             className={`rounded-full p-4 md:p-6 transition-all duration-200 hover:scale-110 cursor-pointer ${

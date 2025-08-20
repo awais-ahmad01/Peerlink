@@ -161,40 +161,56 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getRecentRooms, deleteRoom } from "../../store/actions/rooms";
 
 const Dashboard = ({ username = "Ahmad" }) => {
+  const dispatch= useDispatch();
+  const {rooms, isloading} = useSelector(state => state.rooms);
+
+  console.log("rooms: ", rooms)
+
   const [recentRooms, setRecentRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const API_BASE_URL = "http://localhost:3000"; 
+  // const API_BASE_URL = "http://localhost:3000"; 
 
   useEffect(() => {
+
     fetchRecentRooms();
+
+    // fetchRecentRooms();
   }, [username]);
 
-  const fetchRecentRooms = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/get-rooms/${username}`);
+
+  const fetchRecentRooms = ()=>{
+    dispatch(getRecentRooms(username));
+  }
+
+
+  // const fetchRecentRooms = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await fetch(`${API_BASE_URL}/get-rooms/${username}`);
       
-      if (!response.ok) {
-        throw new Error("Failed to fetch rooms");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch rooms");
+  //     }
       
-      const rooms = await response.json();
-      setRecentRooms(rooms);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching recent rooms:", err);
-      setError("Failed to load recent rooms");
-      // Fallback to empty array if API fails
-      setRecentRooms([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     const rooms = await response.json();
+  //     setRecentRooms(rooms);
+  //     setError(null);
+  //   } catch (err) {
+  //     console.error("Error fetching recent rooms:", err);
+  //     setError("Failed to load recent rooms");
+  //     // Fallback to empty array if API fails
+  //     setRecentRooms([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleCopy = (roomId) => {
     const roomUrl = `${window.location.origin}/room/${roomId}/${username}`;
@@ -202,24 +218,33 @@ const Dashboard = ({ username = "Ahmad" }) => {
     alert(`Copied room link: ${roomUrl}`);
   };
 
-  const handleDelete = async (roomId) => {
-    if (confirm("Are you sure you want to delete this room from your history?")) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/delete-room/${roomId}/${username}`, {
-          method: 'POST',
-        });
+  // const handleDelete = async (roomId) => {
+  //   if (confirm("Are you sure you want to delete this room from your history?")) {
+  //     try {
+  //       const response = await fetch(`${API_BASE_URL}/delete-room/${roomId}/${username}`, {
+  //         method: 'POST',
+  //       });
         
-        if (response.ok) {
-          setRecentRooms((rooms) => rooms.filter((room) => room.id !== roomId));
-        } else {
-          alert("Failed to delete room");
-        }
-      } catch (error) {
-        console.error("Error deleting room:", error);
-        alert("Failed to delete room");
-      }
+  //       if (response.ok) {
+  //         setRecentRooms((rooms) => rooms.filter((room) => room.id !== roomId));
+  //       } else {
+  //         alert("Failed to delete room");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error deleting room:", error);
+  //       alert("Failed to delete room");
+  //     }
+  //   }
+  // };
+
+
+    const handleDelete = async (roomId) => {
+    if (confirm("Are you sure you want to delete this room from your history?")) {
+      dispatch(deleteRoom({username, roomId}));
     }
   };
+
+
 
   const handleJoin = () => {
     const code = document.getElementById("joinCode").value.trim();
@@ -323,7 +348,7 @@ const Dashboard = ({ username = "Ahmad" }) => {
       <div className="bg-slate-800/60 border border-white/10 rounded-xl backdrop-blur-md p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold text-indigo-200">📜 Recent Rooms</h2>
-          {!loading && (
+          {!isloading && (
             <button
               onClick={fetchRecentRooms}
               className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
@@ -333,7 +358,7 @@ const Dashboard = ({ username = "Ahmad" }) => {
           )}
         </div>
 
-        {loading ? (
+        {isloading ? (
           <div className="text-center py-8 text-white/60">
             <div className="text-2xl mb-2">⏳</div>
             Loading recent rooms...
@@ -349,9 +374,9 @@ const Dashboard = ({ username = "Ahmad" }) => {
               Try Again
             </button>
           </div>
-        ) : recentRooms.length > 0 ? (
+        ) : rooms.length > 0 ? (
           <div className="flex flex-col gap-4">
-            {recentRooms.map((room) => (
+            {rooms.map((room) => (
               <div
                 key={room.id}
                 className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition"
