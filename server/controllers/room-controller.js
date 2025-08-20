@@ -38,7 +38,7 @@ async function getRecentRooms(req,res) {
     
     const rooms = await Room.find({
       "participants.username": username,
-      status: "ended"
+        status: "ended"
     })
     .sort({ endedAt: -1 })
     .limit(10);

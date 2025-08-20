@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 const JoinRoomSection = () => {
+  const { user } = useSelector((state) => state.auth);
   const [username, setUsername] = useState('');
   const roomRef = useRef();
   const navigate = useNavigate();
@@ -21,7 +23,12 @@ const JoinRoomSection = () => {
       roomId = path.pathname.split('/').pop();
     }
     
-    navigate(`/call-room/${roomId}/${username}`);
+    if(user){
+      navigate(`/call-room/${roomId}/${user?.username}`);
+    }
+    else{
+      navigate(`/call-room/${roomId}/${username}`);
+    }
   }
 
   return (
@@ -30,6 +37,7 @@ const JoinRoomSection = () => {
       transition-all duration-300 ease-in-out hover:border-[#667eea]  ">
         <div className="mb-7">
           <h3 className="font-medium text-white/80">Join an existing room</h3>
+          {!user?.username && (
           <input
             type="text"
             value={username}
@@ -38,7 +46,7 @@ const JoinRoomSection = () => {
             className="block w-full mt-4 p-3 rounded-xl bg-[rgba(15,20,25,0.8)]
                     border border-white/20 text-white 
                     focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.2)]"
-          />
+          />)}
           <input
             type="text"
             ref={roomRef}
@@ -52,7 +60,7 @@ const JoinRoomSection = () => {
         <div>
           <button
             onClick={handleJoinRoom}
-            disabled = {username.trim()===''}
+           disabled={!user?.username ? username.trim() === "" : false}
             className="w-full text-[0.9rem] bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] 
                         shadow-[0_4px_15px_rgba(102,126,234,0.3)] py-3 px-6 rounded-xl 
                         font-semibold cursor-pointer transition-all duration-300 

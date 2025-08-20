@@ -352,12 +352,14 @@ dotenv.config();
 const session = require('express-session');
 const passport = require('passport');
 
+require('./config/passport');
+
 // Only require passport config if the file exists
-try {
-  require('./config/passport');
-} catch (error) {
-  console.log('Passport config not found, skipping...');
-}
+// try {
+//   require('./config/passport');
+// } catch (error) {
+//   console.log('Passport config not found, skipping...');
+// }
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -366,17 +368,21 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+const authRoute = require('./routes/auth-routes');
+const roomRoute = require('./routes/room-routes');
+const Room = require('./models/room');
+
 // Only require routes if they exist
-let authRoute, roomRoute, Room;
-try {
-  authRoute = require('./routes/auth-routes');
-  roomRoute = require('./routes/room-routes');
-  Room = require('./models/room');
-} catch (error) {
-  console.log('Some routes/models not found, creating fallbacks...');
-  authRoute = express.Router();
-  roomRoute = express.Router();
-}
+// let authRoute, roomRoute, Room;
+// try {
+//   authRoute = require('./routes/auth-routes');
+//   roomRoute = require('./routes/room-routes');
+//   Room = require('./models/room');
+// } catch (error) {
+//   console.log('Some routes/models not found, creating fallbacks...');
+//   authRoute = express.Router();
+//   roomRoute = express.Router();
+// }
 
 // Enhanced error handling for MongoDB
 if (process.env.MONGO_URI) {
@@ -401,7 +407,7 @@ app.use(cors({
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
+    // allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Basic middleware
@@ -424,36 +430,36 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Health check endpoint - MUST be first
-app.get('/health', (req, res) => {
-  console.log('Health check requested');
-  res.status(200).json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memory: process.memoryUsage(),
-    env: process.env.NODE_ENV || 'development'
-  });
-});
+// app.get('/health', (req, res) => {
+//   console.log('Health check requested');
+//   res.status(200).json({ 
+//     status: 'OK', 
+//     timestamp: new Date().toISOString(),
+//     uptime: process.uptime(),
+//     memory: process.memoryUsage(),
+//     env: process.env.NODE_ENV || 'development'
+//   });
+// });
 
 // Basic test endpoint
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'PeerLink Server is running!',
-    timestamp: new Date().toISOString()
-  });
-});
+// app.get('/', (req, res) => {
+//   res.json({ 
+//     message: 'PeerLink Server is running!',
+//     timestamp: new Date().toISOString()
+//   });
+// });
 
 // Test endpoint for Socket.IO
-app.get('/socket-test', (req, res) => {
-  res.json({ 
-    message: 'Socket.IO endpoint ready',
-    transport: 'http'
-  });
-});
+// app.get('/socket-test', (req, res) => {
+//   res.json({ 
+//     message: 'Socket.IO endpoint ready',
+//     transport: 'http'
+//   });
+// });
 
 // Use routes if they exist
-app.use('/auth', authRoute);
-app.use('/room', roomRoute);
+app.use(authRoute);
+app.use(roomRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -464,6 +470,7 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
 });
+
 
 // 404 handler
 app.use((req, res) => {

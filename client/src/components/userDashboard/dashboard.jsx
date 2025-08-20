@@ -159,21 +159,26 @@
 
 
 
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
 import { useDispatch, useSelector } from "react-redux";
 import { getRecentRooms, deleteRoom } from "../../store/actions/rooms";
 
-const Dashboard = ({ username = "Ahmad" }) => {
+const Dashboard = () => {
   const dispatch= useDispatch();
+
+  const {user} = useSelector(state => state.auth);
   const {rooms, isloading} = useSelector(state => state.rooms);
 
   console.log("rooms: ", rooms)
 
-  const [recentRooms, setRecentRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [rooms, setRecentRooms] = useState([]);
+  // const [isloading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const roomRef = useRef();
+  
 
   // const API_BASE_URL = "http://localhost:3000"; 
 
@@ -182,13 +187,14 @@ const Dashboard = ({ username = "Ahmad" }) => {
     fetchRecentRooms();
 
     // fetchRecentRooms();
-  }, [username]);
+  }, [user]);
 
 
   const fetchRecentRooms = ()=>{
+    console.log("dispatching...")
+    const username = user?.username || 'Awais';
     dispatch(getRecentRooms(username));
   }
-
 
   // const fetchRecentRooms = async () => {
   //   try {
@@ -240,39 +246,31 @@ const Dashboard = ({ username = "Ahmad" }) => {
 
     const handleDelete = async (roomId) => {
     if (confirm("Are you sure you want to delete this room from your history?")) {
-      dispatch(deleteRoom({username, roomId}));
+      dispatch(deleteRoom({username:user?.username, roomId}));
     }
   };
 
 
+  
+  const handleJoinRoom = ()=>{
+    const input = roomRef.current?.value.trim();
 
-  const handleJoin = () => {
-    const code = document.getElementById("joinCode").value.trim();
-    if (code) {
-      // Check if it's a full URL or just a room code
-      if (code.startsWith('http')) {
-        // Extract room ID from URL
-        const urlParts = code.split('/');
-        const roomId = urlParts[urlParts.length - 2]; // Assuming URL format: .../room/ROOM_ID/username
-        if (roomId) {
-          navigate(`/room/${roomId}/${username}`);
-        } else {
-          alert("Invalid room URL format");
-        }
-      } else {
-        // Treat as room code
-        navigate(`/room/${code}/${username}`);
-      }
-    } else {
-      alert("Please enter a room code or link");
+    if(!input) return
+
+    let roomId = input;
+    
+    if(input.startsWith('http')){
+      const path = new URL(input);
+      
+      roomId = path.pathname.split('/').pop();
     }
-  };
 
-  const handleCreateRoom = () => {
-    // Generate a random room ID
-    const roomId = Math.random().toString(36).substring(2, 8);
-    navigate(`/room/${roomId}/${username}`);
-  };
+    console.log('user:', user.username);
+    
+    navigate(`/call-room/${roomId}/${user?.username}`);
+  }
+
+
 
   const handleRejoin = (roomId) => {
     navigate(`/room/${roomId}/${username}`);
@@ -281,23 +279,24 @@ const Dashboard = ({ username = "Ahmad" }) => {
   const getParticipantsList = (participantNames) => {
     if (!participantNames || participantNames.length === 0) return "No participants";
     
-    if (participantNames.length <= 3) {
-      return participantNames.join(", ");
-    } else {
-      return `${participantNames.slice(0, 2).join(", ")} and ${participantNames.length - 2} others`;
-    }
+    
+    return participantNames.join(", ");
+    
   };
+
+
+
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 pt-32 md:pt-40 grid gap-8">
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row items-center gap-6 bg-slate-800/60 border border-white/10 rounded-xl backdrop-blur-md p-6">
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-3xl font-bold shadow-lg">
-          {username.charAt(0).toUpperCase()}
+          {user?.username.charAt(0).toUpperCase()}
         </div>
         <div className="text-center md:text-left">
           <h1 className="text-3xl font-bold bg-gradient-to-br from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-            Welcome, {username} 👋
+            Welcome, {user?.username} 👋
           </h1>
           <p className="text-white/70 text-lg">
             Ready to connect with others? Start a new room or join an existing one.
@@ -314,13 +313,15 @@ const Dashboard = ({ username = "Ahmad" }) => {
             <p className="mb-4 opacity-90">
               Start an instant video call with secure, private rooms. No downloads needed.
             </p>
-            <button
-              onClick={handleCreateRoom}
+           <Link to='/create-room'>
+               <button
+              
               className="flex items-center gap-2 bg-white/20 px-6 py-3 rounded-lg font-semibold backdrop-blur-sm hover:bg-white/30 transition"
             >
               <span>➕</span>
               Create Room
             </button>
+           </Link>
           </div>
           <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/10 rounded-full pointer-events-none"></div>
         </div>
@@ -329,14 +330,15 @@ const Dashboard = ({ username = "Ahmad" }) => {
         <div className="bg-slate-800/60 border border-white/10 rounded-xl backdrop-blur-md p-4">
           <h3 className="text-lg font-semibold mb-4 text-indigo-200">🔗 Join a Room</h3>
           <input
+            ref={roomRef}
             id="joinCode"
             type="text"
             placeholder="Enter room code or paste link..."
             className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm text-white placeholder-white/50 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            onKeyDown={(e) => e.key === "Enter" && handleJoin()}
+            onKeyDown={(e) => e.key === "Enter" && handleJoinRoom()}
           />
           <button
-            onClick={handleJoin}
+            onClick={handleJoinRoom}
             className="w-full flex-1 rounded-xl py-3 text-lg font-semibold bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] shadow-[0_4px_15px_rgba(102,126,234,0.3)] transform hover:translate-y-[-2px] hover:shadow-[0_8px_25px_rgba(102,126,234,0.4)] transition cursor-pointer"
           >
             Join Room
@@ -390,8 +392,9 @@ const Dashboard = ({ username = "Ahmad" }) => {
                   </div>
                   <div className="text-xs text-white/50">
                     <span className="font-medium">Participants: </span>
-                    {getParticipantsList(room.participantNames)}
+                    {getParticipantsList(room?.participantNames)}
                   </div>
+
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <button

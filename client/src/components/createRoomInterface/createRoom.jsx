@@ -1,17 +1,15 @@
-
-
-
-
-
 // src/pages/CreateRoom.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const CreateRoom = () => {
-  const [isMicOn, setIsMicOn] = useState(true);   
-  const [isCamOn, setIsCamOn] = useState(true);  
+  const { user } = useSelector((state) => state.auth);
+
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [roomId, setRoomId] = useState('');
+  const [roomId, setRoomId] = useState("");
   const [username, setUsername] = useState("");
   const url = `http://localhost:5173/call-room/${roomId}`;
   const navigate = useNavigate();
@@ -37,22 +35,19 @@ const CreateRoom = () => {
       }
     })();
 
-
     function generateRoomId(length = 8) {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        let result = "";
-        for (let i = 0; i < length; i++) {
-          result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
 
-        setRoomId(result);
-      
-        return true;
-}
+      setRoomId(result);
+
+      return true;
+    }
 
     generateRoomId();
-
-
 
     return () => {
       // Stop preview when leaving
@@ -82,7 +77,13 @@ const CreateRoom = () => {
   }
 
   const handleStartCall = () => {
-    navigate(`/call-room/${roomId}/${username}`);
+
+    if(user){
+      navigate(`/call-room/${roomId}/${user?.username}`);
+    }
+    else{
+      navigate(`/call-room/${roomId}/${username}`);
+    }
   };
 
   const handleShareLink = async () => {
@@ -119,42 +120,44 @@ const CreateRoom = () => {
           </div>
 
           <div className="flex justify-center gap-4 p-3 bg-slate-800/80 rounded-xl backdrop-blur-sm">
-           <button
-        className={`w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-105 transition transform
+            <button
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-105 transition transform
           ${isMicOn ? "bg-green-500" : "bg-red-500"}`}
-        aria-label="Toggle Microphone"
-        onClick={() => {
-          const enabled = !localPreviewStreamRef.current
-            ?.getAudioTracks()?.[0]?.enabled;
+              aria-label="Toggle Microphone"
+              onClick={() => {
+                const enabled =
+                  !localPreviewStreamRef.current?.getAudioTracks()?.[0]
+                    ?.enabled;
 
-          localPreviewStreamRef.current
-            ?.getAudioTracks()
-            .forEach((t) => (t.enabled = enabled));
+                localPreviewStreamRef.current
+                  ?.getAudioTracks()
+                  .forEach((t) => (t.enabled = enabled));
 
-          setIsMicOn(enabled); // update state for UI
-        }}
-      >
-        {isMicOn ? "🎙️" : "🔇"}
-      </button>
+                setIsMicOn(enabled); // update state for UI
+              }}
+            >
+              {isMicOn ? "🎙️" : "🔇"}
+            </button>
 
-      {/* 🎥 Camera Button */}
-      <button
-        className={`w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-105 transition transform
+            {/* 🎥 Camera Button */}
+            <button
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-105 transition transform
           ${isCamOn ? "bg-green-500" : "bg-red-500"}`}
-        aria-label="Toggle Camera"
-        onClick={() => {
-          const enabled = !localPreviewStreamRef.current
-            ?.getVideoTracks()?.[0]?.enabled;
+              aria-label="Toggle Camera"
+              onClick={() => {
+                const enabled =
+                  !localPreviewStreamRef.current?.getVideoTracks()?.[0]
+                    ?.enabled;
 
-          localPreviewStreamRef.current
-            ?.getVideoTracks()
-            .forEach((t) => (t.enabled = enabled));
+                localPreviewStreamRef.current
+                  ?.getVideoTracks()
+                  .forEach((t) => (t.enabled = enabled));
 
-          setIsCamOn(enabled); // update state for UI
-        }}
-      >
-        {isCamOn ? "🎥" : "🚫"}
-      </button>
+                setIsCamOn(enabled); // update state for UI
+              }}
+            >
+              {isCamOn ? "🎥" : "🚫"}
+            </button>
             <button
               className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl hover:scale-105 transition transform"
               aria-label="Settings"
@@ -188,20 +191,21 @@ const CreateRoom = () => {
           </header>
 
           <div className="bg-slate-800/60 border border-white/10 rounded-2xl p-5 backdrop-blur-sm space-y-4">
-            
-             <div>
-      <div className="text-xs uppercase tracking-wider text-slate-300">
-        Your Name
-      </div>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Enter your name"
-        className="mt-1 w-full px-3 py-2 rounded-md bg-black/20 border border-white/10 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      />
-    </div>
-            
+            {!user?.username && (
+              <div>
+                <div className="text-xs uppercase tracking-wider text-slate-300">
+                  Your Name
+                </div>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your name"
+                  className="mt-1 w-full px-3 py-2 rounded-md bg-black/20 border border-white/10 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-xs uppercase tracking-wider text-slate-300">
@@ -231,7 +235,7 @@ const CreateRoom = () => {
               className="flex-1 rounded-xl py-3 text-lg font-semibold bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)]  shadow-[0_4px_15px_rgba(102,126,234,0.3)] transform hover:translate-y-[-2px]
              hover:shadow-[0_8px_25px_rgba(102,126,234,0.4)] transition cursor-pointer"
               onClick={handleStartCall}
-              disabled={username.trim() === ""}
+              disabled={!user?.username ? username.trim() === "" : false}
             >
               🔘 Start Call
             </button>

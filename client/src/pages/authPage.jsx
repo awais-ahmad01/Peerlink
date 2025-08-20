@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signinUser, registerUser } from "../store/actions/auth";
@@ -15,7 +16,7 @@ const loginSchema = yup.object().shape({
 });
 
 const signupSchema = yup.object().shape({
-  name: yup.string().required("Full name is required"),
+  username: yup.string().required("Full name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
@@ -29,6 +30,8 @@ const signupSchema = yup.object().shape({
 
 const AuthPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
   const [loginMessage, setLoginMessage] = useState("");
   const [signupMessage, setSignupMessage] = useState("");
@@ -59,7 +62,11 @@ const AuthPage = () => {
   const onLoginSubmit = (data) => {
     console.log("Login Data:", data);
     setLoginMessage("Success! Redirecting to dashboard...");
-    dispatch(signinUser(data));
+    dispatch(signinUser(data))
+    .unwrap()
+    .then(()=>{
+        navigate('/dashboard');
+    })
   };
 
   const onSignupSubmit = (data) => {
@@ -252,7 +259,7 @@ const AuthPage = () => {
               <input
                 type="text"
                 placeholder="Enter your full name"
-                {...signupRegister("name")}
+                {...signupRegister("username")}
                 className={inputClass}
               />
               {signupErrors.name && (

@@ -28,9 +28,7 @@
 //   const remoteVideoRef = useRef(null);
 //   const messagesEndRef = useRef(null);
 
-
 //   const userLocalId = getUserId();
-
 
 //   console.log('sockket:', socket.id);
 
@@ -112,8 +110,6 @@
 //           socket.emit("offer", { roomId, sdp: offer });
 //         });
 
-
-   
 //         // Receive offer -> set remote, create/send answer
 //         socket.on("offer", async ({ sdp }) => {
 //           // console.log("Offer:");
@@ -199,9 +195,6 @@
 //     };
 //   }, [roomId]);
 
-
-
-
 //   const micToggle = () => {
 //     setMicOpen((prev) => {
 //       const next = !prev;
@@ -257,8 +250,6 @@
 
 //     console.log("emiting msg:...");
 
-    
-
 //     // Send to other users
 //     socket.emit("chat-message", {
 //       roomId,
@@ -272,14 +263,11 @@
 //     setNewMessage("");
 //   };
 
-
-
 //   useEffect(() => {
 //   if (messagesEndRef.current) {
 //     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
 //   }
 // }, [messages]);
-
 
 //   return (
 //     <div className="pt-28 md:pt-36">
@@ -290,7 +278,7 @@
 //           } transition-all duration-300 ease-in-out w-full`}
 //         >
 //           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-//             <div className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)] 
+//             <div className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)]
 //             shadow-[0_10px_30px_rgba(0,0,0,0.3)] rounded-2xl border-2 border-[rgba(255,255,255,0.1)] overflow-hidden">
 //               <div className="absolute top-3 left-3 bg-black text-white p-4 rounded-xl z-50">
 //                 <h2 className="font-medium">{username}</h2>
@@ -333,7 +321,7 @@
 //         <div
 //           className={`fixed top-0 ${
 //             chatOpen ? "right-0" : "-right-full lg:-right-[320px]"
-//           } w-full lg:w-[320px]  
+//           } w-full lg:w-[320px]
 //                 h-screen border-l border-l-white/30 bg-[rgba(30,41,59,0.95)] z-[1000] backdrop-blur-[20px] flex flex-col transition-all duration-300 ease-in-out`}
 //         >
 //           <div className="border-b border-b-white/30 py-7 px-4 flex justify-between items-center">
@@ -348,8 +336,8 @@
 //             </button>
 //           </div>
 //           <div className="flex-1 px-5 py-3 overflow-y-auto">
-//             <div className="flex flex-col gap-4" 
-              
+//             <div className="flex flex-col gap-4"
+
 //             >
 //               {messages.map((m, i) => (
 //                 <div
@@ -398,8 +386,8 @@
 //         <div
 //           className={`fixed top-28 ${
 //             showParticipants ? "left-0" : "left-[-280px]"
-//           }  w-[280px] bg-[rgba(30,41,59,0.95)] backdrop-blur-[10px] 
-//             border-r border-white/10 rounded-tr-xl rounded-br-xl p-6 transition-[left] duration-300 ease-in-out 
+//           }  w-[280px] bg-[rgba(30,41,59,0.95)] backdrop-blur-[10px]
+//             border-r border-white/10 rounded-tr-xl rounded-br-xl p-6 transition-[left] duration-300 ease-in-out
 //             z-[150]`}
 //         >
 //           <div className="text-lg font-semibold mb-4 text-indigo-300">
@@ -492,14 +480,6 @@
 
 // export default CameraSection;
 
-
-
-
-
-
-
-
-
 // src/components/CameraSection.jsx
 import { IoIosPerson } from "react-icons/io";
 import { useEffect, useRef, useState, memo } from "react";
@@ -508,62 +488,70 @@ import { socket } from "../../services/socket";
 import { getUserId } from "../../utils/userId";
 
 // Completely isolated video component that never re-renders unless absolutely necessary
-const RemoteVideoComponent = memo(({ socketId, username, videoEnabled }) => {
-  const videoRef = useRef(null);
-  const streamRef = useRef(null);
+const RemoteVideoComponent = memo(
+  ({ socketId, username, videoEnabled }) => {
+    const videoRef = useRef(null);
+    const streamRef = useRef(null);
 
-  useEffect(() => {
-    // Store this video ref globally so parent can access it
-    if (!window.remoteVideoRefs) window.remoteVideoRefs = {};
-    window.remoteVideoRefs[socketId] = videoRef.current;
-    
-    return () => {
-      if (window.remoteVideoRefs && window.remoteVideoRefs[socketId]) {
-        delete window.remoteVideoRefs[socketId];
-      }
-    };
-  }, [socketId]);
+    useEffect(() => {
+      // Store this video ref globally so parent can access it
+      if (!window.remoteVideoRefs) window.remoteVideoRefs = {};
+      window.remoteVideoRefs[socketId] = videoRef.current;
 
-  // Listen for stream updates via custom events to avoid prop drilling
-  useEffect(() => {
-    const handleStreamUpdate = (event) => {
-      if (event.detail.socketId === socketId && videoRef.current) {
-        videoRef.current.srcObject = event.detail.stream;
-        streamRef.current = event.detail.stream;
-      }
-    };
+      return () => {
+        if (window.remoteVideoRefs && window.remoteVideoRefs[socketId]) {
+          delete window.remoteVideoRefs[socketId];
+        }
+      };
+    }, [socketId]);
 
-    window.addEventListener('remoteStreamUpdate', handleStreamUpdate);
-    return () => window.removeEventListener('remoteStreamUpdate', handleStreamUpdate);
-  }, [socketId]);
+    // Listen for stream updates via custom events to avoid prop drilling
+    useEffect(() => {
+      const handleStreamUpdate = (event) => {
+        if (event.detail.socketId === socketId && videoRef.current) {
+          videoRef.current.srcObject = event.detail.stream;
+          streamRef.current = event.detail.stream;
+        }
+      };
 
-  return (
-    <div className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)] shadow-[0_10px_30px_rgba(0,0,0,0.3)]
-    rounded-2xl border-2 border-[rgba(255,255,255,0.1)] overflow-hidden">
-      <div className="absolute top-3 left-3 bg-black text-white p-4 rounded-xl z-50">
-        <h2 className="font-medium">{username}</h2>
-      </div>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      {!videoEnabled && (
-        <div className="flex justify-center items-center w-full h-full text-9xl text-white/60 relative z-[1] pointer-events-none">
-          <IoIosPerson />
+      window.addEventListener("remoteStreamUpdate", handleStreamUpdate);
+      return () =>
+        window.removeEventListener("remoteStreamUpdate", handleStreamUpdate);
+    }, [socketId]);
+
+    return (
+      <div
+        className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)] shadow-[0_10px_30px_rgba(0,0,0,0.3)]
+    rounded-2xl border-2 border-[rgba(255,255,255,0.1)] overflow-hidden"
+      >
+        <div className="absolute top-3 left-3 bg-black text-white p-4 rounded-xl z-50">
+          <h2 className="font-medium">{username}</h2>
         </div>
-      )}
-    </div>
-  );
-}, (prevProps, nextProps) => {
-  // Only re-render if username or videoEnabled actually changed
-  return prevProps.username === nextProps.username && 
-         prevProps.videoEnabled === nextProps.videoEnabled &&
-         prevProps.socketId === nextProps.socketId;
-});
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {!videoEnabled && (
+          <div className="flex justify-center items-center w-full h-full text-9xl text-white/60 relative z-[1] pointer-events-none">
+            <IoIosPerson />
+          </div>
+        )}
+      </div>
+    );
+  },
+  (prevProps, nextProps) => {
+    // Only re-render if username or videoEnabled actually changed
+    return (
+      prevProps.username === nextProps.username &&
+      prevProps.videoEnabled === nextProps.videoEnabled &&
+      prevProps.socketId === nextProps.socketId
+    );
+  }
+);
 
-RemoteVideoComponent.displayName = 'RemoteVideoComponent';
+RemoteVideoComponent.displayName = "RemoteVideoComponent";
 
 const CameraSection = () => {
   const [chatOpen, setChatOpen] = useState(false);
@@ -574,6 +562,7 @@ const CameraSection = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [remoteUsers, setRemoteUsers] = useState({});
+  const [isConnecting, setIsConnecting] = useState(true);
 
   const { roomId, username } = useParams();
   const navigate = useNavigate();
@@ -586,16 +575,18 @@ const CameraSection = () => {
 
   const userLocalId = getUserId();
 
-  console.log('socket:', socket.id);
-  console.log('remoteUsers:', remoteUsers);
+  console.log("socket:", socket.id);
+  console.log("remoteUsers:", remoteUsers);
 
   // Function to update remote streams without causing re-renders
   const updateRemoteStream = (socketId, stream) => {
     remoteStreamsRef.current[socketId] = stream;
     // Dispatch custom event to update video components
-    window.dispatchEvent(new CustomEvent('remoteStreamUpdate', {
-      detail: { socketId, stream }
-    }));
+    window.dispatchEvent(
+      new CustomEvent("remoteStreamUpdate", {
+        detail: { socketId, stream },
+      })
+    );
   };
 
   // Create a new peer connection for a specific user
@@ -641,7 +632,7 @@ const CameraSection = () => {
         socket.emit("ice-candidate", {
           roomId,
           candidate: e.candidate,
-          targetSocketId: socketId
+          targetSocketId: socketId,
         });
       }
     };
@@ -656,13 +647,13 @@ const CameraSection = () => {
       peerConnections.current[socketId].close();
       delete peerConnections.current[socketId];
     }
-    
-    setRemoteUsers(prev => {
+
+    setRemoteUsers((prev) => {
       const newUsers = { ...prev };
       delete newUsers[socketId];
       return newUsers;
     });
-    
+
     if (remoteStreamsRef.current[socketId]) {
       delete remoteStreamsRef.current[socketId];
     }
@@ -673,6 +664,7 @@ const CameraSection = () => {
 
     const start = async () => {
       try {
+        // setIsConnecting(true)
         // 1) start media
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -688,31 +680,39 @@ const CameraSection = () => {
 
         // 2) connect socket and join room
         if (!socket.connected) socket.connect();
+
+        // socket.on("connect", () => {
+        //   console.log("connected:");
+        //   setIsConnecting(false);
+        // });
+
         socket.emit("join-room", { roomId, username });
+
+        // setIsConnecting(false);
 
         // Handle existing users in the room
         socket.on("existing-users", async (users) => {
-          console.log('Existing users:', users);
+          console.log("Existing users:", users);
           // Create peer connections for all existing users
           for (const user of users) {
             if (user.socketId !== socket.id) {
-              setRemoteUsers(prev => ({
+              setRemoteUsers((prev) => ({
                 ...prev,
-                [user.socketId]: { 
-                  username: user.username, 
-                  videoEnabled: true, 
-                  audioEnabled: true 
-                }
+                [user.socketId]: {
+                  username: user.username,
+                  videoEnabled: true,
+                  audioEnabled: true,
+                },
               }));
-              
+
               const pc = createPeerConnection(user.socketId);
               // Create and send offer to existing user
               const offer = await pc.createOffer();
               await pc.setLocalDescription(offer);
-              socket.emit("offer", { 
-                roomId, 
-                sdp: offer, 
-                targetSocketId: user.socketId 
+              socket.emit("offer", {
+                roomId,
+                sdp: offer,
+                targetSocketId: user.socketId,
               });
             }
           }
@@ -720,15 +720,15 @@ const CameraSection = () => {
 
         // Handle new user joining
         socket.on("user-joined", async ({ socketId, remoteUsername }) => {
-          console.log('New user joined:', remoteUsername, socketId);
+          console.log("New user joined:", remoteUsername, socketId);
           if (socketId !== socket.id) {
-            setRemoteUsers(prev => ({
+            setRemoteUsers((prev) => ({
               ...prev,
-              [socketId]: { 
-                username: remoteUsername, 
-                videoEnabled: true, 
-                audioEnabled: true 
-              }
+              [socketId]: {
+                username: remoteUsername,
+                videoEnabled: true,
+                audioEnabled: true,
+              },
             }));
             createPeerConnection(socketId);
           }
@@ -741,14 +741,14 @@ const CameraSection = () => {
           if (!pc) {
             pc = createPeerConnection(fromSocketId);
           }
-          
+
           await pc.setRemoteDescription(new RTCSessionDescription(sdp));
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
-          socket.emit("answer", { 
-            roomId, 
-            sdp: answer, 
-            targetSocketId: fromSocketId 
+          socket.emit("answer", {
+            roomId,
+            sdp: answer,
+            targetSocketId: fromSocketId,
           });
         });
 
@@ -776,24 +776,24 @@ const CameraSection = () => {
         // Handle camera toggle from other users
         socket.on("camera-toggled", ({ fromSocketId, camEnabled }) => {
           console.log("Camera toggled by:", fromSocketId, camEnabled);
-          setRemoteUsers(prev => ({
+          setRemoteUsers((prev) => ({
             ...prev,
             [fromSocketId]: {
               ...prev[fromSocketId],
-              videoEnabled: camEnabled
-            }
+              videoEnabled: camEnabled,
+            },
           }));
         });
 
         // Handle microphone toggle from other users
         socket.on("mic-toggled", ({ fromSocketId, micEnabled }) => {
           console.log("Mic toggled by:", fromSocketId, micEnabled);
-          setRemoteUsers(prev => ({
+          setRemoteUsers((prev) => ({
             ...prev,
             [fromSocketId]: {
               ...prev[fromSocketId],
-              audioEnabled: micEnabled
-            }
+              audioEnabled: micEnabled,
+            },
           }));
         });
 
@@ -810,9 +810,9 @@ const CameraSection = () => {
           console.log("User left:", socketId);
           removePeerConnection(socketId);
         });
-
       } catch (e) {
         console.error("Failed to start media/connection", e);
+        // setIsConnecting(false)
       }
     };
 
@@ -830,6 +830,7 @@ const CameraSection = () => {
       socket.off("mic-toggled");
       socket.off("chat-message");
       socket.off("chat-history");
+      socket.off("connect");
     };
   }, [roomId]);
 
@@ -839,7 +840,7 @@ const CameraSection = () => {
       localStreamRef.current
         ?.getAudioTracks()
         .forEach((t) => (t.enabled = next));
-      
+
       // Notify other users about mic toggle
       socket.emit("mic-toggled", { roomId, micEnabled: next });
       return next;
@@ -859,11 +860,11 @@ const CameraSection = () => {
   const endCall = () => {
     try {
       // Close all peer connections
-      Object.values(peerConnections.current).forEach(pc => {
+      Object.values(peerConnections.current).forEach((pc) => {
         pc.getSenders().forEach((s) => s.track?.stop());
         pc.close();
       });
-      
+
       localStreamRef.current?.getTracks().forEach((t) => t.stop());
       peerConnections.current = {};
     } catch {}
@@ -924,6 +925,25 @@ const CameraSection = () => {
     return "lg:grid-cols-4";
   };
 
+  // if (isConnecting) {
+  //   return (
+  //     <div className="pt-28 md:pt-36">
+  //       <div className="flex items-center justify-center h-[calc(100vh-180px)]">
+  //         <div className="text-center">
+  //           <div className="text-6xl mb-4">🔄</div>
+  //           <h2 className="text-2xl font-semibold mb-2 text-indigo-200">
+  //             Connecting to Room
+  //           </h2>
+  //           <p className="text-white/60">Setting up your video call...</p>
+  //           <div className="mt-6">
+  //             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="pt-28 md:pt-36">
       <div className="relative flex h-[calc(100vh-180px)] p-4 gap-4">
@@ -934,8 +954,10 @@ const CameraSection = () => {
         >
           <div className={`grid grid-cols-1 ${getGridCols()} gap-4 h-full`}>
             {/* Local user video */}
-            <div className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)] 
-            shadow-[0_10px_30px_rgba(0,0,0,0.3)] rounded-2xl border-2 border-[rgba(255,255,255,0.1)] overflow-hidden">
+            <div
+              className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)] 
+            shadow-[0_10px_30px_rgba(0,0,0,0.3)] rounded-2xl border-2 border-[rgba(255,255,255,0.1)] overflow-hidden"
+            >
               <div className="absolute top-3 left-3 bg-black text-white p-4 rounded-xl z-50">
                 <h2 className="font-medium">{username}</h2>
               </div>
@@ -952,10 +974,10 @@ const CameraSection = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Remote users videos */}
             {Object.entries(remoteUsers).map(([socketId, user]) => (
-              <RemoteVideoComponent 
+              <RemoteVideoComponent
                 key={socketId}
                 socketId={socketId}
                 username={user.username}
@@ -1039,39 +1061,42 @@ const CameraSection = () => {
           <div className="text-lg font-semibold mb-4 text-indigo-300">
             Participants ({totalUsers})
           </div>
-          
+
           {/* Local user */}
           <div className="flex items-center gap-4 p-3 bg-white/5 rounded-lg mb-2">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-700 to-purple-700 rounded-full flex items-center justify-center text-xl">
-              {username?.charAt(0)?.toUpperCase() || 'Y'}
+              {username?.charAt(0)?.toUpperCase() || "Y"}
             </div>
             <div className="flex-1">
               <div className="font-medium mb-1">You</div>
               <div className="flex gap-2 text-xs opacity-70">
                 <span className="flex items-center gap-1">
-                  {micOpen ? '🎙️ Active' : '🎙️ Muted'}
+                  {micOpen ? "🎙️ Active" : "🎙️ Muted"}
                 </span>
                 <span className="flex items-center gap-1">
-                  {camOpen ? '🎥 Active' : '🎥 Off'}
+                  {camOpen ? "🎥 Active" : "🎥 Off"}
                 </span>
               </div>
             </div>
           </div>
-          
+
           {/* Remote users */}
           {Object.entries(remoteUsers).map(([socketId, user]) => (
-            <div key={socketId} className="flex items-center gap-4 p-3 bg-white/5 rounded-lg mb-2">
+            <div
+              key={socketId}
+              className="flex items-center gap-4 p-3 bg-white/5 rounded-lg mb-2"
+            >
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-700 to-purple-700 rounded-full flex items-center justify-center text-xl">
-                {user.username?.charAt(0)?.toUpperCase() || 'U'}
+                {user.username?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="flex-1">
                 <div className="font-medium mb-1">{user.username}</div>
                 <div className="flex gap-2 text-xs opacity-70">
                   <span className="flex items-center gap-1">
-                    {user.audioEnabled ? '🎙️ Active' : '🎙️ Muted'}
+                    {user.audioEnabled ? "🎙️ Active" : "🎙️ Muted"}
                   </span>
                   <span className="flex items-center gap-1">
-                    {user.videoEnabled ? '🎥 Active' : '🎥 Off'}
+                    {user.videoEnabled ? "🎥 Active" : "🎥 Off"}
                   </span>
                 </div>
               </div>
@@ -1104,7 +1129,6 @@ const CameraSection = () => {
           >
             {camOpen ? "🎥" : "🚫"}
           </button>
-
 
           <button
             title="Participants"
@@ -1141,11 +1165,6 @@ const CameraSection = () => {
 
 export default CameraSection;
 
-
-
-
-
-
 // // src/components/CameraSection.jsx
 // import { IoIosPerson } from "react-icons/io";
 // import { useEffect, useRef, useState, memo } from "react";
@@ -1162,7 +1181,7 @@ export default CameraSection;
 //     // Store this video ref globally so parent can access it
 //     if (!window.remoteVideoRefs) window.remoteVideoRefs = {};
 //     window.remoteVideoRefs[socketId] = videoRef.current;
-    
+
 //     return () => {
 //       if (window.remoteVideoRefs && window.remoteVideoRefs[socketId]) {
 //         delete window.remoteVideoRefs[socketId];
@@ -1204,7 +1223,7 @@ export default CameraSection;
 //   );
 // }, (prevProps, nextProps) => {
 //   // Only re-render if username or videoEnabled actually changed
-//   return prevProps.username === nextProps.username && 
+//   return prevProps.username === nextProps.username &&
 //          prevProps.videoEnabled === nextProps.videoEnabled &&
 //          prevProps.socketId === nextProps.socketId;
 // });
@@ -1315,13 +1334,13 @@ export default CameraSection;
 //       peerConnections.current[socketId].close();
 //       delete peerConnections.current[socketId];
 //     }
-    
+
 //     setRemoteUsers(prev => {
 //       const newUsers = { ...prev };
 //       delete newUsers[socketId];
 //       return newUsers;
 //     });
-    
+
 //     if (remoteStreamsRef.current[socketId]) {
 //       delete remoteStreamsRef.current[socketId];
 //     }
@@ -1340,19 +1359,19 @@ export default CameraSection;
 //     const start = async () => {
 //       try {
 //         setIsConnecting(true);
-        
+
 //         // 1) start media
 //         console.log('Requesting media permissions...');
 //         const stream = await navigator.mediaDevices.getUserMedia({
 //           video: true,
 //           audio: true,
 //         });
-        
+
 //         if (!mounted) {
 //           stream.getTracks().forEach(track => track.stop());
 //           return;
 //         }
-        
+
 //         localStreamRef.current = stream;
 //         console.log('Local stream obtained successfully');
 
@@ -1364,7 +1383,7 @@ export default CameraSection;
 //         // 2) connect socket and join room
 //         console.log('Connecting to signaling server...');
 //         if (!socket.connected) socket.connect();
-        
+
 //         // Wait for socket connection
 //         socket.on('connect', () => {
 //           console.log('Connected to signaling server, joining room...');
@@ -1387,21 +1406,21 @@ export default CameraSection;
 //               console.log('Setting up connection to existing user:', user.username);
 //               setRemoteUsers(prev => ({
 //                 ...prev,
-//                 [user.socketId]: { 
-//                   username: user.username, 
-//                   videoEnabled: true, 
-//                   audioEnabled: true 
+//                 [user.socketId]: {
+//                   username: user.username,
+//                   videoEnabled: true,
+//                   audioEnabled: true
 //                 }
 //               }));
-              
+
 //               const pc = createPeerConnection(user.socketId);
 //               // Create and send offer to existing user
 //               const offer = await pc.createOffer();
 //               await pc.setLocalDescription(offer);
-//               socket.emit("offer", { 
-//                 roomId, 
-//                 sdp: offer, 
-//                 targetSocketId: user.socketId 
+//               socket.emit("offer", {
+//                 roomId,
+//                 sdp: offer,
+//                 targetSocketId: user.socketId
 //               });
 //               console.log('Sent offer to:', user.username);
 //             }
@@ -1414,10 +1433,10 @@ export default CameraSection;
 //           if (socketId !== socket.id) {
 //             setRemoteUsers(prev => ({
 //               ...prev,
-//               [socketId]: { 
-//                 username: remoteUsername, 
-//                 videoEnabled: true, 
-//                 audioEnabled: true 
+//               [socketId]: {
+//                 username: remoteUsername,
+//                 videoEnabled: true,
+//                 audioEnabled: true
 //               }
 //             }));
 //             createPeerConnection(socketId);
@@ -1432,15 +1451,15 @@ export default CameraSection;
 //           if (!pc) {
 //             pc = createPeerConnection(fromSocketId);
 //           }
-          
+
 //           try {
 //             await pc.setRemoteDescription(new RTCSessionDescription(sdp));
 //             const answer = await pc.createAnswer();
 //             await pc.setLocalDescription(answer);
-//             socket.emit("answer", { 
-//               roomId, 
-//               sdp: answer, 
-//               targetSocketId: fromSocketId 
+//             socket.emit("answer", {
+//               roomId,
+//               sdp: answer,
+//               targetSocketId: fromSocketId
 //             });
 //             console.log("Sent answer to:", fromSocketId);
 //           } catch (error) {
@@ -1530,7 +1549,7 @@ export default CameraSection;
 //       } catch (e) {
 //         console.error("Failed to start media/connection", e);
 //         setIsConnecting(false);
-        
+
 //         // Show user-friendly error message
 //         if (e.name === 'NotAllowedError') {
 //           alert('Camera and microphone access is required for video calls. Please allow access and refresh the page.');
@@ -1539,7 +1558,7 @@ export default CameraSection;
 //         } else {
 //           alert('Failed to start video call. Please check your devices and connection.');
 //         }
-        
+
 //         navigate('/');
 //       }
 //     };
@@ -1548,7 +1567,7 @@ export default CameraSection;
 
 //     return () => {
 //       mounted = false;
-      
+
 //       // Cleanup event listeners
 //       socket.off("user-joined");
 //       socket.off("offer");
@@ -1569,7 +1588,7 @@ export default CameraSection;
 //   const micToggle = () => {
 //     setMicOpen((prev) => {
 //       const next = !prev;
-      
+
 //       // Toggle local audio tracks
 //       if (localStreamRef.current) {
 //         localStreamRef.current
@@ -1578,11 +1597,11 @@ export default CameraSection;
 //             track.enabled = next;
 //           });
 //       }
-      
+
 //       // Notify other users about mic toggle
 //       socket.emit("mic-toggled", { roomId, micEnabled: next });
 //       console.log('Mic toggled to:', next);
-      
+
 //       return next;
 //     });
 //   };
@@ -1590,7 +1609,7 @@ export default CameraSection;
 //   const camToggle = () => {
 //     setCamOpen((prev) => {
 //       const next = !prev;
-      
+
 //       // Toggle local video tracks
 //       if (localStreamRef.current) {
 //         const videoTracks = localStreamRef.current.getVideoTracks();
@@ -1598,11 +1617,11 @@ export default CameraSection;
 //           track.enabled = next;
 //         });
 //       }
-      
+
 //       setVideoDisplay(next);
 //       socket.emit("camera-toggled", { roomId, camEnabled: next });
 //       console.log('Camera toggled to:', next);
-      
+
 //       return next;
 //     });
 //   };
@@ -1610,7 +1629,7 @@ export default CameraSection;
 //   const endCall = () => {
 //     try {
 //       console.log('Ending call...');
-      
+
 //       // Close all peer connections
 //       Object.values(peerConnections.current).forEach(pc => {
 //         pc.getSenders().forEach((sender) => {
@@ -1620,18 +1639,18 @@ export default CameraSection;
 //         });
 //         pc.close();
 //       });
-      
+
 //       // Stop local media tracks
 //       if (localStreamRef.current) {
 //         localStreamRef.current.getTracks().forEach((track) => {
 //           track.stop();
 //         });
 //       }
-      
+
 //       // Clear references
 //       peerConnections.current = {};
 //       remoteStreamsRef.current = {};
-      
+
 //       // Clear video refs
 //       if (window.remoteVideoRefs) {
 //         Object.keys(window.remoteVideoRefs).forEach(socketId => {
@@ -1641,7 +1660,7 @@ export default CameraSection;
 //         });
 //         window.remoteVideoRefs = {};
 //       }
-      
+
 //       console.log('Call ended successfully');
 //     } catch (error) {
 //       console.error('Error ending call:', error);
@@ -1708,22 +1727,22 @@ export default CameraSection;
 //   };
 
 //   // Show loading screen while connecting
-//   if (isConnecting) {
-//     return (
-//       <div className="pt-28 md:pt-36">
-//         <div className="flex items-center justify-center h-[calc(100vh-180px)]">
-//           <div className="text-center">
-//             <div className="text-6xl mb-4">🔄</div>
-//             <h2 className="text-2xl font-semibold mb-2 text-indigo-200">Connecting to Room</h2>
-//             <p className="text-white/60">Setting up your video call...</p>
-//             <div className="mt-6">
-//               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
-//             </div>
+// if (isConnecting) {
+//   return (
+//     <div className="pt-28 md:pt-36">
+//       <div className="flex items-center justify-center h-[calc(100vh-180px)]">
+//         <div className="text-center">
+//           <div className="text-6xl mb-4">🔄</div>
+//           <h2 className="text-2xl font-semibold mb-2 text-indigo-200">Connecting to Room</h2>
+//           <p className="text-white/60">Setting up your video call...</p>
+//           <div className="mt-6">
+//             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
 //           </div>
 //         </div>
 //       </div>
-//     );
-//   }
+//     </div>
+//   );
+// }
 
 //   return (
 //     <div className="pt-28 md:pt-36">
@@ -1756,19 +1775,19 @@ export default CameraSection;
 //         >
 //           <div className={`grid grid-cols-1 ${getGridCols()} gap-4 h-full`}>
 //             {/* Local user video */}
-//             <div className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)] 
+//             <div className="relative bg-[linear-gradient(135deg,#374151_0%,#1f2937_100%)]
 //             shadow-[0_10px_30px_rgba(0,0,0,0.3)] rounded-2xl border-2 border-[rgba(255,255,255,0.1)] overflow-hidden">
 //               <div className="absolute top-3 left-3 bg-black/70 text-white px-3 py-1 rounded-lg z-50">
 //                 <h2 className="font-medium text-sm">{username} (You)</h2>
 //               </div>
-              
+
 //               {/* Connection status indicator */}
 //               <div className="absolute top-3 right-3 z-50">
 //                 <div className={`w-3 h-3 rounded-full ${socket.connected ? 'bg-green-500' : 'bg-red-500'}`}
 //                      title={socket.connected ? 'Connected' : 'Disconnected'}>
 //                 </div>
 //               </div>
-              
+
 //               <video
 //                 ref={localVideoRef}
 //                 autoPlay
@@ -1782,10 +1801,10 @@ export default CameraSection;
 //                 </div>
 //               )}
 //             </div>
-            
+
 //             {/* Remote users videos */}
 //             {Object.entries(remoteUsers).map(([socketId, user]) => (
-//               <RemoteVideoComponent 
+//               <RemoteVideoComponent
 //                 key={socketId}
 //                 socketId={socketId}
 //                 username={user.username}
@@ -1799,7 +1818,7 @@ export default CameraSection;
 //         <div
 //           className={`fixed top-0 ${
 //             chatOpen ? "right-0" : "-right-full lg:-right-[320px]"
-//           } w-full lg:w-[320px]  
+//           } w-full lg:w-[320px]
 //                 h-screen border-l border-l-white/30 bg-[rgba(30,41,59,0.95)] z-[1000] backdrop-blur-[20px] flex flex-col transition-all duration-300 ease-in-out`}
 //         >
 //           <div className="border-b border-b-white/30 py-7 px-4 flex justify-between items-center">
@@ -1814,7 +1833,7 @@ export default CameraSection;
 //               ×
 //             </button>
 //           </div>
-          
+
 //           <div className="flex-1 px-5 py-3 overflow-y-auto">
 //             <div className="flex flex-col gap-4">
 //               {messages.length === 0 ? (
@@ -1873,8 +1892,8 @@ export default CameraSection;
 //         <div
 //           className={`fixed top-28 ${
 //             showParticipants ? "left-0" : "left-[-280px]"
-//           }  w-[280px] bg-[rgba(30,41,59,0.95)] backdrop-blur-[10px] 
-//             border-r border-white/10 rounded-tr-xl rounded-br-xl p-6 transition-[left] duration-300 ease-in-out 
+//           }  w-[280px] bg-[rgba(30,41,59,0.95)] backdrop-blur-[10px]
+//             border-r border-white/10 rounded-tr-xl rounded-br-xl p-6 transition-[left] duration-300 ease-in-out
 //             z-[150]`}
 //         >
 //           <div className="flex items-center justify-between mb-4">
@@ -1889,7 +1908,7 @@ export default CameraSection;
 //               ×
 //             </button>
 //           </div>
-          
+
 //           {/* Local user */}
 //           <div className="flex items-center gap-4 p-3 bg-white/5 rounded-lg mb-2">
 //             <div className="w-10 h-10 bg-gradient-to-br from-indigo-700 to-purple-700 rounded-full flex items-center justify-center text-xl">
@@ -1907,7 +1926,7 @@ export default CameraSection;
 //               </div>
 //             </div>
 //           </div>
-          
+
 //           {/* Remote users */}
 //           {Object.entries(remoteUsers).map(([socketId, user]) => (
 //             <div key={socketId} className="flex items-center gap-4 p-3 bg-white/5 rounded-lg mb-2">
@@ -1927,7 +1946,7 @@ export default CameraSection;
 //               </div>
 //             </div>
 //           ))}
-          
+
 //           {totalUsers === 1 && (
 //             <div className="text-center text-white/50 py-4">
 //               <div className="text-2xl mb-2">👥</div>

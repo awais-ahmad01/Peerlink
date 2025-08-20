@@ -2,6 +2,7 @@ import {createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
+// const baseURL = 'http://localhost:3000';
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
@@ -95,6 +96,7 @@ export const signOut = createAsyncThunk(
     'auth/signOut',
     async()=>{
         localStorage.removeItem('token');
+        console.log('dispatched..')
         return true;
     }
 )
