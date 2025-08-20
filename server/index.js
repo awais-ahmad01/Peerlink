@@ -64,7 +64,7 @@ const session = require('express-session');
 const passport = require('passport');
 require('./config/passport');
 
-const http = require("http");
+const https = require("https");
 const { Server } = require("socket.io");
 
 const bodyParser = require('body-parser');
@@ -87,9 +87,12 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    // origin: 'https://mind-map-puce-mu.vercel.app',
+    origin: [
+      "https://peerlink-phi.vercel.app",
+      "http://localhost:5173"
+    ],
     methods: 'GET,POST', 
+    credentials: true
 }));
 
 app.use(bodyParser.json());
@@ -110,12 +113,16 @@ app.use(roomRoute);
 
 
 
-const server = http.createServer(app);
+const server = https.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // in prod set: ['https://your-frontend.com']
+   origin: [
+      "https://peerlink-phi.vercel.app",
+      "http://localhost:5173"
+    ],
     methods: ["GET", "POST"],
+    credentials: true
   },
 });
 
