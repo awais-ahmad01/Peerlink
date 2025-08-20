@@ -78,7 +78,7 @@ const CreateRoom = () => {
 
   const handleStartCall = () => {
 
-    if(user){
+    if(user?.username){
        console.log('user exist')
       navigate(`/call-room/${roomId}/${user?.username}`);
     }
