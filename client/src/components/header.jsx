@@ -181,7 +181,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu - Dynamic top positioning */}
+      {/* Mobile Menu  */}
       <div
         className={`${mobileOpen ? "block mobile-menu-active" : "hidden"} 
                     bg-[rgba(30,41,59,0.8)] backdrop-blur-[20px]
@@ -197,6 +197,7 @@ const Header = () => {
               onClick={() => handleMobileOpen()}
             >
               <Link
+              to='/'
                 className="text-[rgba(255,255,255,0.8)] font-medium hover:text-[#667eea]
                                 transition-colors duration-300 ease-in-out"
               >
@@ -225,9 +226,12 @@ const Header = () => {
           </ul>
         </div>
 
-        <div className="flex flex-col gap-4 border-t border-t-white/30 p-6">
-          <div onClick={() => handleMobileOpen()}>
+        <div className="border-t border-t-white/30 p-6">
+          {!isAuthenticated ? (
+            <div className="flex flex-col gap-4">
+              <div onClick={() => handleMobileOpen()}>
             <Link
+            to='/auth'
               className="w-full block text-center text-[0.9rem] bg-transparent py-3 px-6 rounded-xl 
                             font-semibold cursor-pointer transition-all duration-300 
                             ease-in-out text-[rgba(255,255,255,0.9)] border border-[rgba(255,255,255,0.2)]
@@ -239,6 +243,7 @@ const Header = () => {
 
           <div onClick={() => handleMobileOpen()}>
             <Link
+            to='/auth'
               className="w-full block text-center text-[0.9rem] bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] 
                             shadow-[0_4px_15px_rgba(102,126,234,0.3)] py-3 px-6 rounded-xl 
                             font-semibold cursor-pointer transition-all duration-300 
@@ -248,6 +253,21 @@ const Header = () => {
               Register
             </Link>
           </div>
+            </div>
+          ):(
+            <div onClick={() => handleMobileOpen()}>
+            <button
+              onClick={signOutUser}
+              className="w-full block text-center text-[0.9rem] bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] 
+                            shadow-[0_4px_15px_rgba(102,126,234,0.3)] py-3 px-6 rounded-xl 
+                            font-semibold cursor-pointer transition-all duration-300 
+                            ease-in-out text-white
+                            hover:translate-y-[-2px] hover:shadow-[0_8px_25px_rgba(102,126,234,0.4)]"
+            >
+              Logout
+            </button>
+          </div>
+          )}
         </div>
       </div>
     </>

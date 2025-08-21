@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { IoIosPerson } from "react-icons/io";
 
 const CreateRoom = () => {
   const { user } = useSelector((state) => state.auth);
@@ -11,15 +12,15 @@ const CreateRoom = () => {
   const [copied, setCopied] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [username, setUsername] = useState("");
-  const url = `http://localhost:5173/call-room/${roomId}`;
+  const url = `https://peerlink-phi.vercel.app/call-room/${roomId}`;
   const navigate = useNavigate();
 
-  // Local camera preview refs
+  
   const previewRef = useRef(null);
   const localPreviewStreamRef = useRef(null);
 
   useEffect(() => {
-    // Start local camera/mic preview
+   
     (async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -50,7 +51,7 @@ const CreateRoom = () => {
     generateRoomId();
 
     return () => {
-      // Stop preview when leaving
+      
       localPreviewStreamRef.current?.getTracks().forEach((t) => t.stop());
     };
   }, []);
@@ -98,36 +99,9 @@ const CreateRoom = () => {
     } catch {}
   };
 
-  return (
-    <main className="pt-32 md:pt-40 px-8 pb-10">
-      <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-2 items-center">
-        {/* Camera Preview */}
-        <section className="space-y-6">
-          <div className="rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-700 to-slate-800 aspect-video relative">
-            {/* ✅ Actual camera feed visible */}
-            <video
-              ref={previewRef}
-              autoPlay
-              playsInline
-              // muted
-              className="absolute inset-0 w-full h-full object-cover z-[1]"
-            />
-            {/* Emoji overlay (optional) */}
-            <div className="w-full h-full flex items-center justify-center text-6xl text-slate-300 relative z-[2] pointer-events-none opacity-50">
-              👤
-            </div>
-            <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-md text-sm z-[3]">
-              Camera Preview (You're live)
-            </div>
-          </div>
 
-          <div className="flex justify-center gap-4 p-3 bg-slate-800/80 rounded-xl backdrop-blur-sm">
-            <button
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-105 transition transform
-          ${isMicOn ? "bg-green-500" : "bg-red-500"}`}
-              aria-label="Toggle Microphone"
-              onClick={() => {
-                const enabled =
+  const toggleMic = ()=>{
+    const enabled =
                   !localPreviewStreamRef.current?.getAudioTracks()?.[0]
                     ?.enabled;
 
@@ -135,18 +109,11 @@ const CreateRoom = () => {
                   ?.getAudioTracks()
                   .forEach((t) => (t.enabled = enabled));
 
-                setIsMicOn(enabled); // update state for UI
-              }}
-            >
-              {isMicOn ? "🎙️" : "🔇"}
-            </button>
+                setIsMicOn(enabled); 
+  }
 
-            {/* 🎥 Camera Button */}
-            <button
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl hover:scale-105 transition transform
-          ${isCamOn ? "bg-green-500" : "bg-red-500"}`}
-              aria-label="Toggle Camera"
-              onClick={() => {
+
+  const toggleCam = ()=>{
                 const enabled =
                   !localPreviewStreamRef.current?.getVideoTracks()?.[0]
                     ?.enabled;
@@ -155,19 +122,70 @@ const CreateRoom = () => {
                   ?.getVideoTracks()
                   .forEach((t) => (t.enabled = enabled));
 
-                setIsCamOn(enabled); // update state for UI
-              }}
+                setIsCamOn(enabled); 
+              }
+
+
+  return (
+    <main className="pt-32 md:pt-40 px-8 pb-10">
+      <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-2 items-center">
+      
+        <section className="space-y-6">
+         <div className="rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-700 to-slate-800 aspect-video relative">
+  {/* Video */}
+  <video
+    ref={previewRef}
+    autoPlay
+    playsInline
+    // muted
+    className={`absolute inset-0 w-full h-full object-cover z-[1] ${
+      !isCamOn ? "opacity-0" : "opacity-100"
+    }`}
+  />
+
+
+  {!isCamOn && (
+    <div className="absolute inset-0 bg-black flex items-center justify-center z-[1]">
+      <span className="text-8xl text-white/40"><IoIosPerson/></span>
+    </div>
+  )}
+
+  {/* Label */}
+  <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-md text-sm z-[3]">
+    Camera Preview (You're live)
+  </div>
+</div>
+
+          <div className="flex justify-center gap-4 p-3 bg-slate-800/80 rounded-xl backdrop-blur-sm">
+            <button
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-xl 
+               cursor-pointer hover:scale-105 transition transform
+          ${isMicOn ? "bg-green-500" : "bg-red-500"}`}
+              aria-label="Toggle Microphone"
+              onClick={toggleMic}
+            >
+              {isMicOn ? "🎙️" : "🔇"}
+            </button>
+
+            <button
+              className={`w-12 h-12 rounded-full flex items-center justify-center 
+               cursor-pointer text-xl hover:scale-105 transition transform
+          ${isCamOn ? "bg-green-500" : "bg-red-500"}`}
+              aria-label="Toggle Camera"
+              onClick={toggleCam}
             >
               {isCamOn ? "🎥" : "🚫"}
             </button>
-            <button
-              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl hover:scale-105 transition transform"
+            {/* <button
+              className="w-12 h-12 rounded-full bg-white/10
+              cursor-pointer flex items-center justify-center text-xl hover:scale-105 transition transform"
               aria-label="Settings"
             >
               ⚙️
-            </button>
+            </button> */}
             <button
-              className="w-12 h-12 rounded-full bg-red-500/90 flex items-center justify-center text-xl hover:scale-105 transition transform"
+              className="w-12 h-12 rounded-full bg-red-500/90 flex items-center justify-center 
+              cursor-pointer text-xl hover:scale-105 transition transform"
               aria-label="Cancel"
               onClick={() => {
                 localPreviewStreamRef.current
@@ -181,7 +199,7 @@ const CreateRoom = () => {
           </div>
         </section>
 
-        {/* Room Info */}
+      
         <aside className="space-y-6">
           <header className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
@@ -261,7 +279,6 @@ const CreateRoom = () => {
         </aside>
       </div>
 
-      {/* Simple responsive helpers */}
       <style>{`
         @keyframes bounce {
           0%, 80%, 100% { transform: scale(0); }
