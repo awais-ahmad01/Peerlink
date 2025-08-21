@@ -354,12 +354,7 @@ const passport = require('passport');
 
 require('./config/passport');
 
-// Only require passport config if the file exists
-// try {
-//   require('./config/passport');
-// } catch (error) {
-//   console.log('Passport config not found, skipping...');
-// }
+
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -372,19 +367,6 @@ const authRoute = require('./routes/auth-routes');
 const roomRoute = require('./routes/room-routes');
 const Room = require('./models/room');
 
-// Only require routes if they exist
-// let authRoute, roomRoute, Room;
-// try {
-//   authRoute = require('./routes/auth-routes');
-//   roomRoute = require('./routes/room-routes');
-//   Room = require('./models/room');
-// } catch (error) {
-//   console.log('Some routes/models not found, creating fallbacks...');
-//   authRoute = express.Router();
-//   roomRoute = express.Router();
-// }
-
-// Enhanced error handling for MongoDB
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI)
   .then(() => {
@@ -392,13 +374,13 @@ if (process.env.MONGO_URI) {
   })
   .catch(err => {
       console.error('❌ MongoDB connection error:', err.message);
-      // Don't exit - let the app run without DB for now
+      
   });
 } else {
   console.log('⚠️ MONGO_URI not provided, skipping database connection');
 }
 
-// CORS configuration
+
 app.use(cors({
     origin: [
       "https://peerlink-phi.vercel.app",
@@ -407,14 +389,14 @@ app.use(cors({
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
     credentials: true,
-    // allowedHeaders: ['Content-Type', 'Authorization']
+    
 }));
 
-// Basic middleware
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session configuration
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'default-secret-key',
   resave: false,
@@ -425,43 +407,14 @@ app.use(session({
   }
 }));
 
-// Passport initialization
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Health check endpoint - MUST be first
-// app.get('/health', (req, res) => {
-//   console.log('Health check requested');
-//   res.status(200).json({ 
-//     status: 'OK', 
-//     timestamp: new Date().toISOString(),
-//     uptime: process.uptime(),
-//     memory: process.memoryUsage(),
-//     env: process.env.NODE_ENV || 'development'
-//   });
-// });
-
-// Basic test endpoint
-// app.get('/', (req, res) => {
-//   res.json({ 
-//     message: 'PeerLink Server is running!',
-//     timestamp: new Date().toISOString()
-//   });
-// });
-
-// Test endpoint for Socket.IO
-// app.get('/socket-test', (req, res) => {
-//   res.json({ 
-//     message: 'Socket.IO endpoint ready',
-//     transport: 'http'
-//   });
-// });
-
-// Use routes if they exist
 app.use(authRoute);
 app.use(roomRoute);
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error('❌ Server error:', err.message);
   console.error('Stack:', err.stack);
@@ -472,7 +425,6 @@ app.use((err, req, res, next) => {
 });
 
 
-// 404 handler
 app.use((req, res) => {
   console.log('404 - Not found:', req.method, req.path);
   res.status(404).json({ 
@@ -482,10 +434,10 @@ app.use((req, res) => {
   });
 });
 
-// Create HTTP server
+
 const server = http.createServer(app);
 
-// Socket.IO configuration with enhanced error handling
+
 const io = new Server(server, {
   cors: {
     origin: [
@@ -496,31 +448,31 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true
   },
-  // Start with polling for better compatibility
+
   transports: ['polling', 'websocket'],
   allowEIO3: true,
   pingTimeout: 60000,
   pingInterval: 25000,
-  // Add these for Railway
+  
   allowRequest: (req, callback) => {
     console.log('Socket.IO connection attempt from:', req.headers.origin);
     callback(null, true);
   }
 });
 
-// Store room information
+
 const activeRooms = new Map();
 const msgRooms = {};
 
-// Socket.IO connection handling
+
 io.on("connection", (socket) => {
   console.log('✅ User connected:', socket.id);
   console.log('🔗 Transport:', socket.conn.transport.name);
 
-  // Test event
+ 
   socket.emit('welcome', { message: 'Connected to PeerLink server!' });
 
-  // Client asks to join a room
+ 
   socket.on("join-room", async ({ roomId, username }) => {
     console.log('👤 User joining room:', username, 'Room:', roomId, 'Socket:', socket.id);
     
@@ -529,7 +481,7 @@ io.on("connection", (socket) => {
     try {
       let room;
       
-      // Only use database if Room model is available
+      
       if (Room) {
         room = await Room.findOne({ roomId, status: 'active' });
         
@@ -558,7 +510,7 @@ io.on("connection", (socket) => {
         await room.save();
       }
 
-      // Initialize active room if it doesn't exist
+      
       if (!activeRooms.has(roomId)) {
         activeRooms.set(roomId, new Map());
       }
@@ -572,16 +524,16 @@ io.on("connection", (socket) => {
         joinedAt: new Date()
       });
 
-      // Send chat history to the new user
+      
       if (msgRooms[roomId]) {
         console.log('📜 Sending chat history to new user');
         socket.emit("chat-history", msgRooms[roomId]);
       }
 
-      // Send existing users list to the new user
+    
       socket.emit("existing-users", existingUsers);
 
-      // Notify existing users that a new user joined
+     
       socket.to(roomId).emit("user-joined", { 
         socketId: socket.id, 
         remoteUsername: username 
@@ -594,7 +546,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // WebRTC signaling events
+ 
   socket.on("offer", ({ roomId, sdp, targetSocketId }) => {
     console.log('📡 Relaying offer from', socket.id, 'to', targetSocketId);
     socket.to(targetSocketId).emit("offer", { 
@@ -619,7 +571,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Media control events
+
   socket.on("camera-toggled", ({ roomId, camEnabled }) => {
     console.log('📹 Camera toggled by', socket.id, ':', camEnabled);
     socket.to(roomId).emit("camera-toggled", { 
@@ -636,7 +588,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Chat message handling
   socket.on("chat-message", ({ roomId, sender, text, time }) => {
     console.log('💬 Chat message from:', sender);
 
@@ -648,7 +599,7 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("chat-message", msg);
   });
 
-  // Handle disconnection
+ 
   socket.on("disconnecting", async () => {
     console.log('👋 User disconnecting:', socket.id);
     
@@ -658,7 +609,7 @@ io.on("connection", (socket) => {
         
         if (activeRoom.has(socket.id)) {
           try {
-            // Update database if available
+            
             if (Room) {
               await Room.findOneAndUpdate(
                 { 
@@ -716,7 +667,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// Server error handling
+
 server.on('error', (error) => {
   console.error('❌ Server error:', error);
   if (error.code === 'EADDRINUSE') {
@@ -725,7 +676,7 @@ server.on('error', (error) => {
   }
 });
 
-// Graceful shutdown handling
+
 process.on('SIGTERM', () => {
   console.log('🛑 SIGTERM received, shutting down gracefully');
   server.close(() => {
@@ -737,7 +688,7 @@ process.on('SIGTERM', () => {
   });
 });
 
-// Start server
+
 const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, '0.0.0.0', () => {
@@ -747,7 +698,7 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('🔗 Health check available at /health');
 });
 
-// Log any unhandled errors
+
 process.on('uncaughtException', (error) => {
   console.error('❌ Uncaught Exception:', error);
 });
