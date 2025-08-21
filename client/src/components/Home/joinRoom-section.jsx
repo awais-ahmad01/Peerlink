@@ -23,7 +23,7 @@ const JoinRoomSection = () => {
       roomId = path.pathname.split('/').pop();
     }
     
-    if(user){
+    if(user?.username){
       navigate(`/call-room/${roomId}/${user?.username}`);
     }
     else{

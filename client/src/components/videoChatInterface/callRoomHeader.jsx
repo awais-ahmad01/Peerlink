@@ -16,9 +16,9 @@ const Header = () => {
         ROOM - {roomId}
       </span>
 
-      <button className="px-3 sm:px-4 py-1.5 border-2 border-red-500 text-red-500 rounded-md font-medium transition-all duration-300 hover:bg-red-500 hover:text-white whitespace-nowrap">
+      {/* <button className="px-3 sm:px-4 py-1.5 border-2 border-red-500 text-red-500 rounded-md font-medium transition-all duration-300 hover:bg-red-500 hover:text-white whitespace-nowrap">
         Leave Room
-      </button>
+      </button> */}
     </header>
   );
 };
