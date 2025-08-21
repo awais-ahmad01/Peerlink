@@ -87,7 +87,7 @@ const Header = () => {
                   Home
                 </Link>
               </li>
-              {user && (
+              {isAuthenticated && (
                 <li>
                 <Link
                     to='/dashboard'
