@@ -16,7 +16,7 @@ const GoogleSuccess = () => {
 
       // ✅ Force token re-verification before navigation
       dispatch(verifyToken()).then(() => {
-        navigate('/dashboardPanel');
+        navigate('/dashboard');
       });
     }
   }, [token, navigate, dispatch]);
