@@ -439,52 +439,133 @@
 
 
 
-const app = require('express')();
+// const app = require('express')();
 
+// const dotenv = require('dotenv');
+// dotenv.config();
+// const session = require('express-session');
+// const passport = require('passport');
+// require('./config/passport');
+// const bodyParser = require('body-parser');
+// const cors = require('cors');
+// const mongoose = require('mongoose');
+// const authRoute = require('./routes/auth-routes');
+
+// mongoose.connect(process.env.MONGO_URI)
+// .then(() => {
+//     console.log('Connected to MongoDB');
+// })
+// .catch(err => {
+//     console.error('MongoDB connection error:', err);
+// });
+
+// app.use(cors({
+//     origin: 'http://localhost:5173',
+//     // origin: 'https://peerlink-phi.vercel.app',
+//     methods: 'GET,POST', 
+// }));
+// app.use(bodyParser.json());
+
+
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave: false,
+//   saveUninitialized: true
+// }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+
+
+// app.use(authRoute)
+
+
+
+// app.listen(process.env.PORT || 3001, () => {
+//     console.log('Server is running on port ', process.env.PORT);
+// });
+
+
+
+
+// server.js or app.js
+const express = require('express');
+const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
+
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const passport = require('passport');
-require('./config/passport');
+require('./config/passport'); // This will now work correctly
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const authRoute = require('./routes/auth-routes');
+// const journalRoute = require('./routes/journal-routes'); // Uncomment if you have this
 
-mongoose.connect(process.env.MONGO_URI)
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
 .then(() => {
     console.log('Connected to MongoDB');
 })
 .catch(err => {
     console.error('MongoDB connection error:', err);
+    process.exit(1);
 });
 
+// CORS Configuration
 app.use(cors({
-    // origin: 'http://localhost:5173',
-    origin: 'https://peerlink-phi.vercel.app',
-    methods: 'GET,POST', 
+    origin: 'https://peerlink-phi.vercel.app', // CORRECT peerlink URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
 }));
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-
+// Session Configuration with MongoDB Store
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        touchAfter: 24 * 3600
+    }),
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-app.use(authRoute)
-
-
-
-app.listen(process.env.PORT || 3001, () => {
-    console.log('Server is running on port ', process.env.PORT);
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Routes
+app.use('/', authRoute);
+// app.use('/', journalRoute); // Uncomment if you have this
 
+// Error handling
+app.use((err, req, res, next) => {
+    console.error('Server Error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Peerlink server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
 
 
 
