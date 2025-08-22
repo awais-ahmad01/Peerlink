@@ -72,7 +72,7 @@ const AuthPage = () => {
 
   const onSignupSubmit = (data) => {
     console.log("Signup Data:", data);
-    setSignupMessage("Account created successfully! Welcome to PeerLink.");
+    // setSignupMessage("Account created successfully! Welcome to PeerLink.");
     dispatch(registerUser(data))
       .unwrap()
       .then((res) => {
