@@ -15,14 +15,14 @@ router.post('/resendVerification', resendVerificationEmail)
 
 
 
-// Trigger Google Login
+
 router.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email'],
-  prompt: 'select_account'  // 👈 forces Google to ask for account
+  prompt: 'select_account' 
 }));
 
 
-// Google Callback
+
 router.get('/auth/google/callback', passport.authenticate('google', {
   failureRedirect: '/auth',
   session: false
@@ -34,8 +34,8 @@ router.get('/auth/google/callback', passport.authenticate('google', {
     expiresIn: '1h'
   });
 
-  // Redirect to frontend with token
-  res.redirect(`http://localhost:5173/google-success?token=${token}`);
+  
+  res.redirect(`https://peerlink-phi.vercel.app/google-success?token=${token}`);
 });
 
 

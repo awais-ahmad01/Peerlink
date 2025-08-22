@@ -5,6 +5,7 @@ const initialState = {
     isloading: true,
     user: null,
     isAuthenticated: false,
+    error: null
 }
 
 const authSlice = createSlice({
@@ -14,16 +15,22 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
            .addCase(registerUser.pending, (state) => {
-                state.isloading = true;
-           })
+  state.isloading = true;
+})
 
-           .addCase(registerUser.fulfilled, (state, action) => {
-                state.isloading = false;
-           })
+.addCase(registerUser.fulfilled, (state, action) => {
+  state.isloading = false;
+  state.user = action.payload.user;       
+  state.isAuthenticated = false;   
+  state.error = null;
+ 
+})
 
-            .addCase(registerUser.rejected, (state) => {
-                state.isloading = false;
-           })
+.addCase(registerUser.rejected, (state, action) => {
+  state.isloading = false;
+  state.error = action.payload || action.error.message || "Something went wrong";
+})
+
 
            .addCase(signinUser.pending, (state) => {
                 state.isloading = true;
@@ -39,6 +46,7 @@ const authSlice = createSlice({
                 state.isloading = false;
                 state.user = null;
                 state.isAuthenticated = false;
+                state.error = action.payload || action.error.message || "Something went wrong";
            })
 
            .addCase(verifyToken.pending, (state, action)=>{

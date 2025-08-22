@@ -1,7 +1,5 @@
-const Room = require('../models/room');
 
-
-
+const Room = require('../models/room'); 
 
 function formatDate(date) {
   const now = new Date();
@@ -31,19 +29,19 @@ function formatDuration(minutes) {
   }
 }
 
-async function getRecentRooms(req,res) {
-
-     try {
-    const { username } = req.params;
+async function getRecentRooms(req, res) {
+  try {
+    const { userId } = req.params;
     
-    const rooms = await Room.find({
-      "participants.username": username,
-        status: "ended"
+    
+    const userRooms = await Room.find({
+      userId: userId,
+      
     })
-    .sort({ endedAt: -1 })
-    .limit(10);
+    // .sort({ endedAt: -1 })
+    // .limit(10);
 
-    const formattedRooms = rooms.map(room => ({
+    const formattedRooms = userRooms.map(room => ({
       id: room.roomId,
       date: formatDate(room.endedAt),
       duration: formatDuration(room.duration),
@@ -58,26 +56,24 @@ async function getRecentRooms(req,res) {
     console.error("Error fetching recent rooms:", error);
     res.status(500).json({ error: "Failed to fetch rooms" });
   }
-    
 }
 
 
-async function deleteRoomRecord(req,res) {
-    try {
-    const { roomId, username } = req.params;
+async function deleteRoomRecord(req, res) {
+  try {
+    const { roomId, userId } = req.params;
     
-    // Only allow deletion if user was a participant
-    const room = await Room.findOne({
+    
+    const result = await Room.findOneAndDelete({
       roomId,
-      "participants.username": username
+      userId: userId
     });
 
-    if (!room) {
-      return res.status(404).json({ error: "Room not found or access denied" });
+    if (!result) {
+      return res.status(404).json({ error: "Room not found in your history" });
     }
 
-    await Room.findOneAndDelete({ roomId });
-    res.json({ message: "Room deleted successfully" });
+    res.json({ message: "Room deleted from your history successfully" });
   } catch (error) {
     console.error("Error deleting room:", error);
     res.status(500).json({ error: "Failed to delete room" });
@@ -85,4 +81,95 @@ async function deleteRoomRecord(req,res) {
 }
 
 
-module.exports = {getRecentRooms, deleteRoomRecord};
+async function createOrUpdateUserRoom(roomId, userId, username, otherParticipants, isActive = true) {
+  try {
+   
+    if (!userId) {
+      console.log('⚠️ Skipping room record creation - no userId provided');
+      return null;
+    }
+
+    console.log(`📝 Creating/updating room record for user ${username} (${userId}) in room ${roomId}`);
+
+    
+    let userRoom = await Room.findOne({ 
+      roomId, 
+      userId,
+      status: 'active' 
+    });
+
+    
+    const participantsList = otherParticipants.map(p => ({
+      username: p.username,
+      userId: p.userId || null,
+      socketId: p.socketId,
+      joinedAt: p.joinedAt || new Date(),
+      leftAt: p.leftAt || null
+    }));
+
+    if (!userRoom) {
+      
+      console.log(`✨ Creating new room record for user ${username}`);
+      userRoom = new Room({
+        roomId,
+        userId,
+        username,
+        participants: participantsList,
+        maxParticipants: Math.max(1, otherParticipants.length + 1), 
+        status: isActive ? 'active' : 'ended',
+        createdAt: new Date()
+      });
+    } else {
+      
+      console.log(`🔄 Updating existing room record for user ${username}`);
+      userRoom.participants = participantsList;
+      
+     
+      const activeParticipants = participantsList.filter(p => !p.leftAt).length + 1; 
+      if (activeParticipants > userRoom.maxParticipants) {
+        userRoom.maxParticipants = activeParticipants;
+      }
+    }
+
+    await userRoom.save();
+    console.log(`✅ Room record saved successfully for user ${username} with ${participantsList.length} participants`);
+    return userRoom;
+  } catch (error) {
+    console.error(`❌ Error creating/updating user room for ${username}:`, error);
+    return null;
+  }
+}
+
+
+async function endUserRoom(roomId, userId, duration) {
+  try {
+    if (!userId) {
+      return null;
+    }
+
+    const result = await Room.findOneAndUpdate(
+      { 
+        roomId, 
+        userId,
+        status: 'active' 
+      },
+      { 
+        endedAt: new Date(),
+        duration,
+        status: 'ended'
+      }
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error ending user room:", error);
+    return null;
+  }
+}
+
+module.exports = {
+  getRecentRooms, 
+  deleteRoomRecord,
+  createOrUpdateUserRoom,
+  endUserRoom
+};

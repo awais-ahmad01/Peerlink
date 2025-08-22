@@ -1,16 +1,16 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
-const User = require('../models/user.js'); // Your User model
+const User = require('../models/user.js'); 
 const dotenv = require('dotenv');
 dotenv.config();
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/auth/google/callback'
+    callbackURL: 'https://peerlink.up.railway.app/auth/google/callback'
 
   },
-  async (accessToken, refreshToken, profile, done) => {
+  async (profile, done) => {
     try {
       let user = await User.findOne({ googleId: profile.id });
       if (!user) {

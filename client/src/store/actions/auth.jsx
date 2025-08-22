@@ -1,12 +1,12 @@
 import {createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL;
-// const baseURL = 'http://localhost:3000';
+// const baseURL = import.meta.env.VITE_API_BASE_URL;
+const baseURL = 'http://localhost:3000';
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async(formData)=>{
+  async(formData, { rejectWithValue })=>{
     try{
 
         console.log('form:', formData)
@@ -14,10 +14,13 @@ export const registerUser = createAsyncThunk(
 
         console.log('response:', response)
 
-        return true
+        return response.data
     }
     catch(error){
          console.log('Error: ', error)
+          return rejectWithValue(
+            error.response?.data?.message || "Failed to register user"
+      );
     }
   }
 )
@@ -26,7 +29,7 @@ export const registerUser = createAsyncThunk(
 
 export const signinUser = createAsyncThunk(
     'auth/siginUser',
-    async(formData)=>{
+    async(formData, { rejectWithValue })=>{
         try{
             console.log('form: ', formData)
 
@@ -44,7 +47,9 @@ export const signinUser = createAsyncThunk(
         }
         catch(error){
             console.log("Error:", error)
-            throw error;
+             return rejectWithValue(
+                error.response?.data?.message || "Failed to login user"
+      );
         }
     }
 )
@@ -87,6 +92,7 @@ export const verifyToken = createAsyncThunk(
         catch(error){
             console.log("Error:", error)
             throw error;
+           
         }
     }
 )

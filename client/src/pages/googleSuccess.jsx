@@ -14,7 +14,6 @@ const GoogleSuccess = () => {
       console.log('Token received:', token);
       localStorage.setItem('token', token);
 
-      // ✅ Force token re-verification before navigation
       dispatch(verifyToken()).then(() => {
         navigate('/dashboard');
       });

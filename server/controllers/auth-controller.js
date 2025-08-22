@@ -12,12 +12,12 @@ async function registerUser(req, res) {
     console.log('username:', username)
 
     try {
-        // Check if user already exists
+        
         const existingUser = await User.find({ email });
-        if (existingUser.length > 0) {
+        if (!existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
-        // Hash the password
+    
 
         console.log('user not exists')
 
@@ -71,7 +71,7 @@ async function loginUser(req, res) {
 
     try {
         const user = await User.findOne({ email });
-        if (user.length === 0) {
+        if (!user) {
             return res.status(400).json({ message: 'User not found' });
         }
 

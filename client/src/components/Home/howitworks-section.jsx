@@ -2,10 +2,6 @@ import { FaPlus } from "react-icons/fa6";
 import { FaLink } from "react-icons/fa6";
 import { RiMessage2Line } from "react-icons/ri";
 
-
-
-
-
 const HowItWorksSection = ()=>{
 
 

@@ -27,7 +27,12 @@ const JoinRoomSection = () => {
       navigate(`/call-room/${roomId}/${user?.username}`);
     }
     else{
-      navigate(`/call-room/${roomId}/${username}`);
+      if(username.trim() != ''){
+        navigate(`/call-room/${roomId}/${username}`);
+      }
+      else{
+        alert("Please enter username before joining a room !!")
+      }
     }
   }
 
@@ -60,7 +65,7 @@ const JoinRoomSection = () => {
         <div>
           <button
             onClick={handleJoinRoom}
-           disabled={!user?.username ? username.trim() === "" : false}
+          //  disabled={!user?.username ? username.trim() === "" : false}
             className="w-full text-[0.9rem] bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)] 
                         shadow-[0_4px_15px_rgba(102,126,234,0.3)] py-3 px-6 rounded-xl 
                         font-semibold cursor-pointer transition-all duration-300 

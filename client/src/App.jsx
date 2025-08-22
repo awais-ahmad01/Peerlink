@@ -14,27 +14,20 @@ import GoogleSuccess from "./pages/googleSuccess";
 import PrivateRoute from "./routeGuard/privateRoute";
 import Loader from "./utils/loader";
 
-
 import { verifyToken } from "./store/actions/auth";
 
 function App() {
-
   const dispatch = useDispatch();
 
-  const {isloading} = useSelector(state => state.auth);
+  const { isloading } = useSelector((state) => state.auth);
 
-
-
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(verifyToken());
   }, [dispatch]);
 
-
-
- if(isloading){
-  return <Loader/>
- }
-
+  if (isloading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -52,11 +45,11 @@ function App() {
 
         <Route path="/verify-email" element={<VerifyEmail />} />
 
-         <Route path="/google-success" element={<GoogleSuccess />} />
+        <Route path="/google-success" element={<GoogleSuccess />} />
 
-         <Route element={<PrivateRoute/>}>
-            <Route path="dashboard" element={<UserDashboard />} />
-         </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="dashboard" element={<UserDashboard />} />
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

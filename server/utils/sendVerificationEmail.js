@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://localhost:5173/verify-email?token=${token}&email=${email}`;
+  const verificationLink = `https://peerlink-phi.vercel.app/verify-email?token=${token}&email=${email}`;
 
   await transporter.sendMail({
     from: '"Peerlink" <aahmad19376@gmail.com>',

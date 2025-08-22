@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
+import Loader from "../utils/loader";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -51,7 +52,7 @@ const VerifyEmail = () => {
   return (
     <div className="flex items-center justify-center min-h-screen py-10 px-5 bg-gradient-to-tr from-slate-800 to-slate-950">
       <div className="w-full max-w-lg bg-slate-800/60 border border-white/10 rounded-3xl p-8 backdrop-blur-lg shadow-2xl relative overflow-hidden">
-        {/* Gradient top border like AuthPage */}
+      
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-t-3xl" />
 
         <div className="text-center mb-6">
@@ -61,14 +62,12 @@ const VerifyEmail = () => {
           <p className="text-white/70 mt-2">{message}</p>
         </div>
 
-        {/* Loading spinner */}
+     
         {loading && (
-          <div className="flex justify-center mb-6">
-            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          <Loader/>
         )}
 
-        {/* Buttons */}
+      
         {isVerified === true && (
           <Link to="/login">
             <button

@@ -1,4 +1,4 @@
-// src/pages/CreateRoom.jsx
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -79,13 +79,20 @@ const CreateRoom = () => {
 
   const handleStartCall = () => {
 
+
     if(user?.username){
        console.log('user exist')
       navigate(`/call-room/${roomId}/${user?.username}`);
     }
     else{
       console.log('user not exist')
-      navigate(`/call-room/${roomId}/${username}`);
+      if(username.trim() != ''){
+        navigate(`/call-room/${roomId}/${username}`);
+      }
+      else{
+        alert("Please enter username before starting a call!!")
+      }
+      
     }
   };
 
@@ -176,13 +183,7 @@ const CreateRoom = () => {
             >
               {isCamOn ? "🎥" : "🚫"}
             </button>
-            {/* <button
-              className="w-12 h-12 rounded-full bg-white/10
-              cursor-pointer flex items-center justify-center text-xl hover:scale-105 transition transform"
-              aria-label="Settings"
-            >
-              ⚙️
-            </button> */}
+           
             <button
               className="w-12 h-12 rounded-full bg-red-500/90 flex items-center justify-center 
               cursor-pointer text-xl hover:scale-105 transition transform"
@@ -255,7 +256,7 @@ const CreateRoom = () => {
               className="flex-1 rounded-xl py-3 text-lg font-semibold bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)]  shadow-[0_4px_15px_rgba(102,126,234,0.3)] transform hover:translate-y-[-2px]
              hover:shadow-[0_8px_25px_rgba(102,126,234,0.4)] transition cursor-pointer"
               onClick={handleStartCall}
-              disabled={!user?.username ? username.trim() === "" : false}
+              // disabled={!user?.username ? username.trim() === "" : false}
             >
               🔘 Start Call
             </button>

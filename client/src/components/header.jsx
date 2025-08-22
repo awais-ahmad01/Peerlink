@@ -24,7 +24,7 @@ const Header = () => {
     }
   };
 
-  // Calculate header height
+  
   const updateHeaderHeight = () => {
     if (headerRef.current) {
       setHeaderHeight(headerRef.current.offsetHeight);
@@ -32,10 +32,9 @@ const Header = () => {
   };
 
   useEffect(() => {
-    // Initial calculation
+    
     updateHeaderHeight();
 
-    // Recalculate on window resize
     const handleResize = () => {
       updateHeaderHeight();
     };
@@ -49,7 +48,7 @@ const Header = () => {
     };
   }, []);
 
-  // Also update height when mobile menu state changes (in case header content changes)
+  
   useEffect(() => {
     updateHeaderHeight();
   }, [mobileOpen]);
@@ -108,14 +107,7 @@ const Header = () => {
                   About
                 </Link>
               </li>
-              <li>
-                <Link
-                  className="text-[rgba(255, 255, 255, 0.8)] font-medium hover:text-[#667eea]
-                                    transition-colors duration-300 ease-in-out"
-                >
-                  Contact Us
-                </Link>
-              </li>
+              
             </ul>
           </div>
 
@@ -204,25 +196,35 @@ const Header = () => {
                 Home
               </Link>
             </li>
+            {isAuthenticated && (
+              <li
+              className="border-b border-b-[rgba(255,255,255,0.05)] rounded-xl p-4"
+              onClick={() => handleMobileOpen()}
+            >
+              <Link
+                to='/dashboard'
+                className="text-[rgba(255,255,255,0.8)] font-medium hover:text-[#667eea]
+                                transition-colors duration-300 ease-in-out"
+              >
+                Dashboard
+              </Link>
+            </li>
+  )
+
+}
             <li
               className="border-b border-b-[rgba(255,255,255,0.05)] rounded-xl p-4"
               onClick={() => handleMobileOpen()}
             >
               <Link
+                
                 className="text-[rgba(255,255,255,0.8)] font-medium hover:text-[#667eea]
                                 transition-colors duration-300 ease-in-out"
               >
                 About
               </Link>
             </li>
-            <li className="p-4" onClick={() => handleMobileOpen()}>
-              <Link
-                className="text-[rgba(255,255,255,0.8)] font-medium hover:text-[#667eea]
-                                transition-colors duration-300 ease-in-out"
-              >
-                Contact Us
-              </Link>
-            </li>
+           
           </ul>
         </div>
 

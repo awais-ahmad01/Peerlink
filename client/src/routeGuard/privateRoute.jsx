@@ -1,7 +1,7 @@
 // components/PrivateRoute.jsx
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-// import { Loader } from "@mantine/core";
+import Loader from "../utils/loader";
 
 const PrivateRoute = () => {
 
@@ -13,13 +13,11 @@ const PrivateRoute = () => {
 
   
 
-  // if (isloading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <Loader/>
-  //     </div>
-  //   );
-  // }
+  if (isloading) {
+    return (
+      <Loader/>
+    );
+  }
 
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
