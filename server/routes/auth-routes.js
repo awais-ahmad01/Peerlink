@@ -52,14 +52,14 @@ const jwt = require('jsonwebtoken');
 
 const { registerUser, loginUser, verifyToken, verifyEmail, resendVerificationEmail } = require('../controllers/auth-controller');
 
-// Regular auth routes
+
 router.post('/register', registerUser); 
 router.post('/login', loginUser);
 router.get('/verifyToken', verifyToken);
 router.get('/verifyEmail', verifyEmail);
 router.post('/resendVerification', resendVerificationEmail);
 
-// Google OAuth routes with CORRECT URLs for peerlink
+
 router.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
     prompt: 'select_account' 
@@ -76,12 +76,12 @@ router.get('/auth/google/callback', passport.authenticate('google', {
             return res.redirect('https://peerlink-phi.vercel.app/auth?error=no_user');
         }
 
-        // Generate JWT token
+     
         const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
             expiresIn: '24h'
         });
 
-        // Redirect to PEERLINK frontend (not mindmap)
+    
         res.redirect(`https://peerlink-phi.vercel.app/google-success?token=${token}`);
         
     } catch (error) {
