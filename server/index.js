@@ -6,7 +6,6 @@ dotenv.config();
 
 const session = require('express-session');
 const passport = require('passport');
-
 require('./config/passport');
 
 const http = require("http");
@@ -49,15 +48,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'default-secret-key',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
+  // cookie: {
+  //   secure: process.env.NODE_ENV === 'production',
+  //   maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  // }
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 
