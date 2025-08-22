@@ -78,7 +78,6 @@ const AuthPage = () => {
       .then((res) => {
         alert(res?.data?.message || "User Registered Successfully!!");
       })
-      
   };
 
   const handleGoogleLogin = () => {

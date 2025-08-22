@@ -21,6 +21,7 @@ export const registerUser = createAsyncThunk(
           return rejectWithValue(
             error.response?.data?.message || "Failed to register user"
       );
+      
     }
   }
 )
