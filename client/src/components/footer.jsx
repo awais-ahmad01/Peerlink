@@ -7,19 +7,19 @@ const Footer = ()=>{
         
         
         <div className="flex justify-center gap-8 mb-8 flex-wrap">
-          <Link to="/about" className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
+          <Link  className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
             About
           </Link>
-          <Link to="/contact" className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
+          <Link  className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
             Contact
           </Link>
-          <Link to="/privacy" className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
+          <Link  className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
             Privacy Policy
           </Link>
-          <Link to="/terms" className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
+          <Link  className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
             Terms of Service
           </Link>
-          <Link to="/github" className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
+          <Link  className="text-[rgba(255,255,255,0.7)] hover:text-[#667eea] transition-colors duration-300">
             GitHub
           </Link>
         </div>
