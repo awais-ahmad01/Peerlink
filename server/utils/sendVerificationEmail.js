@@ -14,10 +14,10 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://localhost:5173/verify-email?token=${token}&email=${email}`;
+  const verificationLink = `https://peerlink-phi.vercel.app/verify-email?token=${token}&email=${email}`;
 
   await transporter.sendMail({
-    from: '"Peerlink" <enter67803@gmail.com>',
+    from: '"Peerlink" <aahmad19376@gmail.com>',
     to: email,
     subject: 'Verify Your Email',
     html: `<h3>Click to verify your email:</h3><a href="${verificationLink}">${verificationLink}</a>`,
