@@ -69,7 +69,7 @@ const VerifyEmail = () => {
 
       
         {isVerified === true && (
-          <Link to="/login">
+          <Link to="/auth">
             <button
               className={`${btnClass} bg-gradient-to-tr from-indigo-600 to-purple-600`}
             >
