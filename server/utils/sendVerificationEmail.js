@@ -14,6 +14,8 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = async (email, token) => {
+  console.log('Email:', email);
+  console.log("tokeN:", token);
   const verificationLink = `https://peerlink-phi.vercel.app/verify-email?token=${token}&email=${email}`;
   console.log("Link:",verificationLink)
   console.log('email verification sending...')
